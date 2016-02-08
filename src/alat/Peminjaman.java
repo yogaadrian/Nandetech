@@ -1,11 +1,11 @@
 package alat;
 
 import database.Database;
+import user.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by acel on 08-Feb-16.
@@ -79,5 +79,33 @@ public class Peminjaman {
         }
     }
 
+    public void cancelPeminjaman(int id_peminjaman){
+        Database db = new Database();
+        db.connect(path);
+
+        final String query = "DELETE FROM Peminjaman " +
+                "WHERE id_peminjaman = " + id_peminjaman;
+        db.changeData(query);
+
+        db.closeDatabase();
+    }
+
+    public void addPeminjaman(String id_user, String tanggal_peminjaman,
+                              String tanggal_pengembalian, String deskripsi) {
+        //Timestamp format: 2011-06-08 16:20:12
+        Database db = new Database();
+        db.connect(path);
+
+        User peminjam = new User(id_user);
+        if(peminjam.exists()){
+            final String query = "INSERT INTO Peminjaman " +
+                    "VALUES (NULL, '" + id_user + "', '" + tanggal_peminjaman + "', '" + tanggal_pengembalian +
+                    "')";
+            db.changeData(query);
+        }
+        final String query = "";
+
+        db.closeDatabase();
+    }
 
 }
