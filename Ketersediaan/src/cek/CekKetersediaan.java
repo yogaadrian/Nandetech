@@ -4,6 +4,7 @@ import database.Database;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 /**
  * Created by Julio on 2/9/2016.
@@ -15,16 +16,53 @@ public class CekKetersediaan {
     public CekKetersediaan(){
         db = new Database();
     }
-
+    public ArrayList<ResultRow> removeDuplicate(ArrayList<ResultRow> ArRow){
+        ArrayList<ResultRow> arTemp = new ArrayList<>();
+        for (int i=0;i<ArRow.size();i++) {
+            ResultRow rowNewest = ArRow.get(i);
+            for (int j=0;j<ArRow.size();j++) {
+                if ((i!=j)&&(rowNewest.getId_alat()==ArRow.get(j).getId_alat())){
+                    if (ArRow.get(j).getTanggal_peminjaman().after(rowNewest.getTanggal_peminjaman())){
+                        rowNewest=ArRow.get(j);
+                        ArRow.remove(j);
+                    }
+                }
+            }
+            arTemp.add(rowNewest);
+        }
+        return arTemp;
+    }
     public void cek(String namaAlat, Timestamp tanggalPinjam){
         ResultSet rs;
-        String query = "SELECT alat.id_alat, peminjaman.tanggal_peminjaman, peminjaman.tanggal_pengembalian FROM" +
-                "peminjaman JOIN peminjaman_alat ON peminjaman.id_peminjaman=peminjaman_alat.id_peminjaman JOIN \n" +
-                "alat ON alat.id_alat=peminjaman_alat.id_alat WHERE LCASE(alat.nama_alat)=LCASE("+namaAlat+")";
+        ArrayList<ResultRow> ArRow = new ArrayList<>();
+        String query = "SELECT alat.id_alat, peminjaman.tanggal_peminjaman, alat.kondisi, peminjaman.tanggal_pengembalian FROM peminjaman JOIN peminjaman_alat ON peminjaman.id_peminjaman=peminjaman_alat.id_peminjaman JOIN alat ON alat.id_alat=peminjaman_alat.id_alat WHERE LCASE(alat.nama_alat)=LCASE(\""+namaAlat+"\")";
         db.connect(path);
         rs = db.fetchData(query);
         try{
-
+            if (rs.next()){
+                do{
+                    ResultRow row = new ResultRow(rs.getInt("alat.id_alat"),rs.getTimestamp("tanggal_peminjaman"),rs.getTimestamp("tanggal_pengembalian"),namaAlat,rs.getString("kondisi"));
+                    ArRow.add(row);
+                } while(rs.next());
+                ArRow = removeDuplicate(ArRow);
+                for (int i=0;i<ArRow.size();i++){
+                    if (ArRow.get(i).getKondisi().equalsIgnoreCase("Rusak")){
+                        ArRow.get(i).setAvailability("Not Available");
+                    } else {
+                        if (ArRow.get(i).getTanggal_pengembalian().after(tanggalPinjam)){
+                            ArRow.get(i).setAvailability("Not Available");
+                        } else {
+                            ArRow.get(i).setAvailability("Available");
+                        }
+                    }
+                }
+                for (int i=0;i<ArRow.size();i++){
+                    System.out.println("ID Alat : "+ArRow.get(i).getId_alat()+" Nama : "+ArRow.get(i).getNama_alat()+" Status : "+ArRow.get(i).getAvailability());
+                }
+            } else {
+                //EMPTY SET
+                System.out.println("EMPTY!");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
