@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Ketersediaan/Ketersediaan.iml" filepath="$PROJECT_DIR$/Ketersediaan/Ketersediaan.iml" />
       <module fileurl="file://$PROJECT_DIR$/Nandetech.iml" filepath="$PROJECT_DIR$/Nandetech.iml" />
       <module fileurl="file://$PROJECT_DIR$/Peminjaman/Peminjaman.iml" filepath="$PROJECT_DIR$/Peminjaman/Peminjaman.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Perbaikan/Perbaikan.iml" filepath="$PROJECT_DIR$/Perbaikan/Perbaikan.iml" />
       <module fileurl="file://$PROJECT_DIR$/Statistik/Statistik.iml" filepath="$PROJECT_DIR$/Statistik/Statistik.iml" />
     </modules>
   </component>
