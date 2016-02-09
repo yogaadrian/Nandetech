@@ -43,9 +43,12 @@ public class NandetechCekController implements Initializable {
     @FXML
     private TableColumn<ResultRow, String> TableStatus;
 
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-        CekKetersediaan check = new CekKetersediaan();
+    @FXML
+    private Label notFound;
 
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        TableCek.setVisible(false);
+        CekKetersediaan check = new CekKetersediaan();
         final Timestamp tanggalPinjam;
         ButtonDate.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -57,12 +60,19 @@ public class NandetechCekController implements Initializable {
         ButtonCek.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ArrayList<ResultRow> tableOut= check.cek(Nama_alat.getText(),Timestamp.valueOf(ButtonDate.getValue().atStartOfDay()));
-                ObservableList<ResultRow> listBuffer = FXCollections.observableArrayList(tableOut);
-                TableID.setCellValueFactory(new PropertyValueFactory<ResultRow,String>("id_alat"));
-                TableName.setCellValueFactory(new PropertyValueFactory<ResultRow,String>("nama_alat"));
-                TableStatus.setCellValueFactory(new PropertyValueFactory<ResultRow,String>("availability"));
-                TableCek.setItems(listBuffer);
+                if (ButtonDate.getValue()!=null) {
+                    ArrayList<ResultRow> tableOut = check.cek(Nama_alat.getText(), Timestamp.valueOf(ButtonDate.getValue().atStartOfDay()));
+                    if (!tableOut.isEmpty()) {
+                        TableCek.setVisible(true);
+                        ObservableList<ResultRow> listBuffer = FXCollections.observableArrayList(tableOut);
+                        TableID.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("id_alat"));
+                        TableName.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("nama_alat"));
+                        TableStatus.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("availability"));
+                        TableCek.setItems(listBuffer);
+                    } else {
+                        notFound.setVisible(true);
+                    }
+                }
             }
         });
 
