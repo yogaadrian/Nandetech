@@ -1,4 +1,4 @@
-package cek;
+package Model;
 
 import java.sql.Date;
 import java.sql.Timestamp;

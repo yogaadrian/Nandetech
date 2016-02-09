@@ -1,6 +1,4 @@
-package cek;
-
-import database.Database;
+package Model;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -16,6 +14,7 @@ public class CekKetersediaan {
     public CekKetersediaan(){
         db = new Database();
     }
+
     public ArrayList<ResultRow> removeDuplicate(ArrayList<ResultRow> ArRow){
         ArrayList<ResultRow> arTemp = new ArrayList<>();
         for (int i=0;i<ArRow.size();i++) {
@@ -32,7 +31,7 @@ public class CekKetersediaan {
         }
         return arTemp;
     }
-    public void cek(String namaAlat, Timestamp tanggalPinjam){
+    public ArrayList<ResultRow> cek(String namaAlat, Timestamp tanggalPinjam){
         ResultSet rs;
         ArrayList<ResultRow> ArRow = new ArrayList<>();
         String query = "SELECT alat.id_alat, peminjaman.tanggal_peminjaman, alat.kondisi, peminjaman.tanggal_pengembalian FROM peminjaman JOIN peminjaman_alat ON peminjaman.id_peminjaman=peminjaman_alat.id_peminjaman JOIN alat ON alat.id_alat=peminjaman_alat.id_alat WHERE LCASE(alat.nama_alat)=LCASE(\""+namaAlat+"\")";
@@ -66,5 +65,6 @@ public class CekKetersediaan {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return ArRow;
     }
 }
