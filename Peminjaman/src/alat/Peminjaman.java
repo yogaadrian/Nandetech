@@ -59,7 +59,11 @@ public class Peminjaman {
                 int j=0;
                 ArrayList<String> temp = new ArrayList<>(1);
                 while(j<rs.getMetaData().getColumnCount()) {
-                    temp.add(rs.getString(j + 1));
+                    if((rs.getMetaData().getColumnName(j+1).startsWith("tanggal"))) {
+                        temp.add(rs.getTimestamp(j+1).toString());
+                    } else {
+                        temp.add(rs.getString(j + 1));
+                    }
                     j++;
                 }
                 list.add(temp);
@@ -87,6 +91,10 @@ public class Peminjaman {
                 "WHERE id_peminjaman = " + id_peminjaman;
         db.changeData(query);
 
+        final String query2 = "DELETE FROM peminjaman_alat " +
+                "WHERE id_peminjaman = " + id_peminjaman;
+        db.changeData(query2);
+
         db.closeDatabase();
     }
 
@@ -99,11 +107,23 @@ public class Peminjaman {
         User peminjam = new User(id_user);
         if(peminjam.exists()){
             final String query = "INSERT INTO Peminjaman " +
-                    "VALUES (NULL, '" + id_user + "', '" + tanggal_peminjaman + "', '" + tanggal_pengembalian +
-                    "')";
+                    "VALUES (NULL, '" + id_user + "', '" + deskripsi + "', '" + tanggal_peminjaman +
+                    "', '" + tanggal_pengembalian + "')";
+            System.out.println(query);
             db.changeData(query);
         }
-        final String query = "";
+        db.closeDatabase();
+    }
+
+    public void addPeminjamanAlat(int id_peminjaman, int id_alat[]) {
+        //Timestamp format: 2011-06-08 16:20:12
+        Database db = new Database();
+        db.connect(path);
+
+        for(int i=0; i<id_alat.length; i++){
+            final String query = "INSERT INTO peminjaman_alat VALUES (" + id_peminjaman + ", " + id_alat[i] + ")";
+            db.changeData(query);
+        }
 
         db.closeDatabase();
     }
