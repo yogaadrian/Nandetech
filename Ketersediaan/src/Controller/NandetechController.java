@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 import Model.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class NandetechCekController implements Initializable {
+public class NandetechController implements Initializable {
 
     @FXML
     private TextField Nama_alat;
