@@ -53,7 +53,7 @@ public class Perbaikan {
         System.out.println(listAlat);
         return listAlat;
     }
-    public void tampilkanPerbaikan(int N){
+    public ArrayList<String> tampilkanPerbaikan(int N){
         String query = "";
         ResultSet rs;
         ResultSetMetaData rsmd = null;
@@ -91,6 +91,7 @@ public class Perbaikan {
         else {
             System.out.println("Status barang dengan id = "+list.get(0)+" "+ list.get(3)+"\n Barang sedang dalam perbaikan");
         }
+        return list;
     }
     public void mulaiPerbaikan(int N){
         try {

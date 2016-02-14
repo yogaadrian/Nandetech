@@ -6,6 +6,7 @@ package Controller;
 import Model.Ketersediaan.CekKetersediaan;
 import Model.Ketersediaan.ResultRow;
 import Model.Perbaikan.Perbaikan;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -85,52 +86,58 @@ public class NandetechController implements Initializable {
         buttonSelesaiPerbaiki.setDisable(true);
         final Timestamp tanggalPinjam;
 
-        ButtonDate.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                LocalDate date = ButtonDate.getValue();
-            }
+        ButtonDate.setOnAction(event -> {
+            LocalDate date = ButtonDate.getValue();
         });
 
-        ButtonCek.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (ButtonDate.getValue()!=null) {
-                    ArrayList<ResultRow> tableOut = check.cek(Nama_alat.getText(), Timestamp.valueOf(ButtonDate.getValue().atStartOfDay()));
-                    if (!tableOut.isEmpty()) {
-                        TableCek.setVisible(true);
-                        ObservableList<ResultRow> listBuffer = FXCollections.observableArrayList(tableOut);
-                        TableID.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("id_alat"));
-                        TableName.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("nama_alat"));
-                        TableStatus.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("availability"));
-                        TableCek.setItems(listBuffer);
-                    } else {
-                        notFound.setVisible(true);
+        ButtonCek.setOnAction(event -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (ButtonDate.getValue()!=null) {
+                        ArrayList<ResultRow> tableOut = check.cek(Nama_alat.getText(), Timestamp.valueOf(ButtonDate.getValue().atStartOfDay()));
+                        if (!tableOut.isEmpty()) {
+                            TableCek.setVisible(true);
+                            ObservableList<ResultRow> listBuffer = FXCollections.observableArrayList(tableOut);
+                            TableID.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("id_alat"));
+                            TableName.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("nama_alat"));
+                            TableStatus.setCellValueFactory(new PropertyValueFactory<ResultRow, String>("availability"));
+                            TableCek.setItems(listBuffer);
+                        } else {
+                            notFound.setVisible(true);
+                        }
                     }
                 }
-            }
+            }).start();
+
         });
 
         searchButtonID.setOnAction(event -> {
-            ArrayList<String> status;
-            int N;
-            try {
-                N = Integer.parseInt(searchIDField.getText());
-            } catch (NumberFormatException ex){
-                N=0;
-            }
-            status=perbaikan.tampilkanPerbaikan(N);
-            if (!status.isEmpty()){
-                tablePerbaikan.setVisible(true);
-                ObservableList<String> listBuffer = FXCollections.observableArrayList(Arrays.asList("Supaya arraylist nya size 1"));
-                kolomIDPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(0)));
-                kolomNamaPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(1)));
-                kolomKondisiPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(3)));
-                tablePerbaikan.setItems(listBuffer);
-                if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<String> status;
+                    int N;
+                    try {
+                        N = Integer.parseInt(searchIDField.getText());
+                    } catch (NumberFormatException ex){
+                        N=0;
+                    }
+                    status=perbaikan.tampilkanPerbaikan(N);
+                    if (!status.isEmpty()){
+                        tablePerbaikan.setVisible(true);
+                        ObservableList<String> listBuffer = FXCollections.observableArrayList(Arrays.asList("Supaya arraylist nya size 1"));
+                        kolomIDPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(0)));
+                        kolomNamaPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(1)));
+                        kolomKondisiPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(3)));
+                        tablePerbaikan.setItems(listBuffer);
+                        if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
 
+                        }
+                    }
                 }
-            }
+            }).start();
+
         });
     }
 
