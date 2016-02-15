@@ -29,9 +29,10 @@ public class LoginController implements Initializable {
     private Label passwordError;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        login_password_button.setDefaultButton(true);
         login_password_button.setOnAction(event->{
             String password=login_password_field.getText();
-            if (password.equals("anjing")){
+            if (password.equals("adminduktek")){
                 Parent root;
                 try {
                     root = FXMLLoader.load(getClass().getResource("../View/Nandetech.fxml"));
@@ -39,6 +40,7 @@ public class LoginController implements Initializable {
                     Scene scene = new Scene(root);
                     stage.setTitle("Nandetech");
                     stage.setScene(scene);
+                    stage.setResizable(false);
                     stage.show();
                     ((Node)(event.getSource())).getScene().getWindow().hide();
                 } catch (IOException exc) {

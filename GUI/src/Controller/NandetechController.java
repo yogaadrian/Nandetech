@@ -9,6 +9,7 @@ import Model.Peminjaman.Peminjaman;
 import Model.Peminjaman.RowPeminjaman;
 import Model.Perbaikan.Perbaikan;
 import Model.Perbaikan.RowPerbaikan;
+import Model.Statistik.Statistik;
 import com.sun.rowset.internal.Row;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import javafx.application.Platform;
@@ -21,9 +22,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,7 +35,6 @@ import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
 
 public class NandetechController implements Initializable {
 
@@ -103,9 +105,6 @@ public class NandetechController implements Initializable {
     private Button peminjaman_add_button;
 
     @FXML
-    private Button peminjaman_delete_button;
-
-    @FXML
     private TableView<RowPeminjaman> peminjaman_table;
 
     @FXML
@@ -127,52 +126,10 @@ public class NandetechController implements Initializable {
     private TableColumn<RowPeminjaman, String> peminjaman_kolom_deskripsi;
 
     @FXML
-    private Button booking_add_button;
+    private TableColumn<RowPeminjaman, Button> peminjaman_kolom_cancel;
 
     @FXML
-    private Button booking_cancel_button;
-
-    @FXML
-    private TextField booking_idPeminjam_field;
-
-    @FXML
-    private DatePicker booking_tanggalPeminjaman;
-
-    @FXML
-    private DatePicker booking_tanggalPengembalian;
-
-    @FXML
-    private TextField booking_deskripsi_field;
-
-    @FXML
-    private Text text_1;
-
-    @FXML
-    private Text text_2;
-
-    @FXML
-    private Text text_3;
-
-    @FXML
-    private Text text_4;
-
-    @FXML
-    private TableView<ResultRow> booking_alat_table;
-
-    @FXML
-    private TableColumn<ResultRow, Integer> booking_kolom_id;
-
-    @FXML
-    private TableColumn<ResultRow, String> booking_kolom_nama;
-
-    @FXML
-    private TableColumn<ResultRow, String> booking_kolom_status;
-
-    @FXML
-    private TableColumn<ResultRow, CheckBox> booking_kolom_checkBox;
-
-    @FXML
-    private BarChart<?, ?> statistik_chart_penggunaan;
+    private BarChart<String, Integer> statistik_chart_penggunaan;
 
     @FXML
     private TextField statistik_nama_alat;
@@ -181,7 +138,7 @@ public class NandetechController implements Initializable {
     private Button statistik_search_nama;
 
     @FXML
-    private BarChart<?, ?> statistik_chart_penggunaankelompok;
+    private BarChart<String, Integer> statistik_chart_penggunaankelompok;
 
     @FXML
     private TextField statistik_golongan;
@@ -190,38 +147,55 @@ public class NandetechController implements Initializable {
     private Button statistik_search_golongan;
 
     @FXML
-    private ComboBox<?> statistik_choice_ID;
+    private ComboBox<ArrayList<String>> statistik_choice_ID;
 
     @FXML
-    private BarChart<?, ?> statistik_chart_perbaikan;
+    private BarChart<String, Integer> statistik_chart_perbaikan;
+
+    @FXML
+    private Button searchStatistikPerbaikan;
+
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         CekKetersediaan check = new CekKetersediaan();
         Perbaikan perbaikan = new Perbaikan();
+        Statistik statistik = new Statistik();
         Peminjaman peminjaman = new Peminjaman();
         TableCek.setVisible(false);
         buttonPerbaiki.setDisable(true);
         buttonSelesaiPerbaiki.setDisable(true);
+        statistik_chart_penggunaan.setVisible(false);
+        statistik_chart_penggunaankelompok.setVisible(false);
+        statistik_chart_perbaikan.setVisible(false);
+
         final Timestamp tanggalPinjam;
-        peminjaman_combo_search.getItems().add(0, "ID Peminjaman");
-        peminjaman_combo_search.getItems().add(0, "ID Alat");
-        peminjaman_combo_search.getItems().add(0, "ID Peminjam");
+        peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
+        peminjaman_combo_search.getItems().add(0,"ID Alat");
+        peminjaman_combo_search.getItems().add(0,"ID Peminjam");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 ArrayList<ArrayList<String>> listAlat = perbaikan.semuaAlat();
                 ArrayList<String> viewableAlat = new ArrayList<String>();
-                for (int i=0;i<listAlat.size();i++){
-                    viewableAlat.add(i,listAlat.get(i).get(0)+" | "+listAlat.get(i).get(1));
+                for (int i = 0; i < listAlat.size(); i++) {
+                    viewableAlat.add(i, listAlat.get(i).get(0) + " | " + listAlat.get(i).get(1));
                     listAlat.get(i).remove(2);
                     listAlat.get(i).remove(2);
                 }
                 ObservableList<ArrayList<String>> observableAlat = FXCollections.observableArrayList(listAlat);
                 choiceID.getItems().clear();
                 choiceID.setItems(observableAlat);
+                statistik_choice_ID.getItems().clear();
+                statistik_choice_ID.setItems(observableAlat);
             }
         }).start();
         /* CEK KETERSEDIAAN */
+
+        Nama_alat.setOnAction(event->{
+            ButtonCek.setDefaultButton(true);
+        });
+
         ButtonDate.setOnAction(event -> {
             LocalDate date = ButtonDate.getValue();
         });
@@ -230,7 +204,7 @@ public class NandetechController implements Initializable {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (ButtonDate.getValue()!=null) {
+                    if (ButtonDate.getValue() != null) {
                         ArrayList<ResultRow> tableOut = check.cek(Nama_alat.getText(), Timestamp.valueOf(ButtonDate.getValue().atStartOfDay()));
                         if (!tableOut.isEmpty()) {
                             TableCek.setVisible(true);
@@ -250,6 +224,11 @@ public class NandetechController implements Initializable {
         });
 
         /* PERBAIKAN */
+
+        choiceID.setOnAction(event->{
+            searchButtonID.setDefaultButton(true);
+        });
+
         searchButtonID.setOnAction(event -> {
             new Thread(new Runnable() {
                 @Override
@@ -267,7 +246,7 @@ public class NandetechController implements Initializable {
                     if (!status.isEmpty()){
                         tablePerbaikan.setVisible(true);
                         ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-                        aRowPerbaikan.add(0, new RowPerbaikan(status.get(0), status.get(1), status.get(3)));
+                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
                         ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
                         kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
@@ -370,7 +349,7 @@ public class NandetechController implements Initializable {
                     tabelPeminjamanBuffer = peminjaman.tampilkanPeminjaman(N,pilihan);
                     ArrayList<RowPeminjaman> tabelPeminjaman = new ArrayList<RowPeminjaman>();
                     System.out.println(tabelPeminjamanBuffer.size());
-                    for (int i=0;i<tabelPeminjamanBuffer.size();i++ ){
+                    for (int i=1;i<tabelPeminjamanBuffer.size();i++ ){
                         tabelPeminjaman.add(new RowPeminjaman(Integer.parseInt(tabelPeminjamanBuffer.get(i).get(0)),
                                 Integer.parseInt(tabelPeminjamanBuffer.get(i).get(6)),
                                 tabelPeminjamanBuffer.get(i).get(1),
@@ -380,9 +359,8 @@ public class NandetechController implements Initializable {
                     }
                     for (int i=0;i<tabelPeminjamanBuffer.size();i++){
                         for (int j=0;j<tabelPeminjamanBuffer.get(i).size();j++){
-                            System.out.print(tabelPeminjamanBuffer.get(i).get(j) + "#");
+                            System.out.println(tabelPeminjamanBuffer.get(i).get(j));
                         }
-                        System.out.println();
                     }
                     if (!tabelPeminjaman.isEmpty()) {
                         peminjaman_table.setVisible(true);
@@ -400,31 +378,110 @@ public class NandetechController implements Initializable {
                 }
             }).start();
         });
+        /*STATISTIK */
+        statistik_choice_ID.setOnAction(event->{
+            searchStatistikPerbaikan.setDefaultButton(true);
+        });
+        statistik_golongan.setOnAction(event->{
+            statistik_search_golongan.setDefaultButton(true);
+        });
+        statistik_nama_alat.setOnAction(event->{
+            statistik_search_nama.setDefaultButton(true);
+        });
+        //Perbaikan Alat
+        searchStatistikPerbaikan.setOnAction(event -> {
+            statistik_chart_perbaikan.getData().removeAll();//BELUM BERFUNGSI
+            statistik_chart_perbaikan.getData().clear();
+            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            ArrayList<String> status;
+            int N;
+            N = Integer.parseInt(statistik_choice_ID.getValue().get(0));
+            //System.out.println(N);
 
-        peminjaman_add_button.setOnAction(event->{
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    peminjaman_search_field.setVisible(false);
-                    peminjaman_combo_search.setVisible(false);
-                    peminjaman_search_button.setVisible(false);
-                    peminjaman_add_button.setVisible(false);
-                    peminjaman_delete_button.setVisible(false);
-                    peminjaman_table.setVisible(false);
-
-                    text_1.setVisible(true);
-                    text_2.setVisible(true);
-                    text_3.setVisible(true);
-                    text_4.setVisible(true);
-                    booking_add_button.setVisible(true);
-                    booking_cancel_button.setVisible(true);
-                    booking_idPeminjam_field.setVisible(true);
-                    booking_tanggalPeminjaman.setVisible(true);
-                    booking_tanggalPengembalian.setVisible(true);
-                    booking_deskripsi_field.setVisible(true);
-                    booking_alat_table.setVisible(true);
+            try {
+                status = statistik.ShowStatistikPerbaikanAlat(N);
+                if (!status.isEmpty()) {
+                    for (int i = 0; i < status.size() / 3; i++) {
+                        System.out.println(i);
+                        Integer y = Integer.parseInt(status.get((i * 3) + 2));
+                        String x = "";
+                        x = x.concat(status.get(i * 3));
+                        x = x.concat(" / ");
+                        x = x.concat(status.get((i * 3) + 1));
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    statistik_chart_perbaikan.setVisible(true);
+                    statistik_chart_perbaikan.getData().add(series);
                 }
-            }).start();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
+        //Penggunaan nama alat
+        statistik_search_nama.setOnAction(event -> {
+
+            statistik_chart_penggunaan.getData().clear();
+    //System.out.println(N);
+            try {
+                XYChart.Series<String, Integer> series = new XYChart.Series<>();
+                ArrayList<String> status;
+                String N;
+                N = statistik_nama_alat.getText();
+                N = N.toLowerCase();
+                status = statistik.ShowStatistikPenggunaanAlat(N);
+                if (!status.isEmpty()) {
+                    for (int i = 0; i < status.size() / 4; i++) {
+                        System.out.println(i);
+                        Integer y = Integer.parseInt(status.get((i * 4) + 3));
+                        String x = "";
+                        x = x.concat(status.get(i * 4));
+                        x = x.concat(" / ");
+                        x = x.concat(status.get((i * 4) + 1));
+                        x = x.concat(" - ");
+                        x = x.concat(status.get((i * 4) + 2));
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    statistik_chart_penggunaan.setVisible(true);
+                    statistik_chart_penggunaan.getData().add(series);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+    });
+    //penggunaan alat oleh suatu kelompok
+        statistik_search_golongan.setOnAction(event -> {
+            statistik_chart_penggunaankelompok.getData().removeAll();//BELUM BERFUNGSI
+            statistik_chart_penggunaankelompok.getData().clear();
+            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            ArrayList<String> status;
+            String N;
+            N = statistik_golongan.getText();
+            N = N.toLowerCase();
+            //System.out.println(N);
+            try {
+                status = statistik.ShowStatistikPenggunaanKelompok(N);
+                if (!status.isEmpty()) {
+                    for (int i = 0; i < status.size() / 4; i++) {
+                        System.out.println(i);
+                        Integer y = Integer.parseInt(status.get((i * 4) + 3));
+                        String x = "";
+                        x = x.concat(status.get(i * 4));
+                        x = x.concat(" / ");
+                        x = x.concat(status.get((i * 4) + 1));
+                        x = x.concat(" - ");
+                        x = x.concat(status.get((i * 4) + 2));
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    statistik_chart_penggunaankelompok.setVisible(true);
+                    statistik_chart_penggunaankelompok.getData().add(series);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         });
 
 
