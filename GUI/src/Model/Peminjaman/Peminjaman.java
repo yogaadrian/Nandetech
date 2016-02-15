@@ -146,7 +146,7 @@ public class Peminjaman {
         db.connect(path);
 
         String query = "SELECT * " +
-                "FROM Peminjaman JOIN Peminjaman_alat " +
+                "FROM peminjaman JOIN peminjaman_alat " +
                 "WHERE id_alat = " + id_alat;
         ResultSet rs = db.fetchData(query);
         try {
@@ -177,7 +177,7 @@ public class Peminjaman {
 
         int id_peminjaman = 0;
         String query = "SELECT *" +
-                "FROM Peminjaman";
+                "FROM peminjaman";
         ResultSet rs = db.fetchData(query);
 
         try {
@@ -194,14 +194,14 @@ public class Peminjaman {
 
         if(valid) {
             if (peminjam.exists()) {
-                query = "INSERT INTO Peminjaman " +
+                query = "INSERT INTO peminjaman " +
                         "VALUES (" + id_peminjaman + ", '" + id_user + "', '" + deskripsi + "', '" +
                         tanggal_peminjaman + "', '" + tanggal_pengembalian + "')";
                 db.changeData(query);
             }
 
             for (int i = 0; i < alat.length; i++) {
-                query = "INSERT INTO Peminjaman_alat " +
+                query = "INSERT INTO peminjaman_alat " +
                         "VALUES (" + id_peminjaman + ", " + alat[i] + ")";
                 db.changeData(query);
             }

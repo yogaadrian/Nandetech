@@ -467,22 +467,28 @@ public class NandetechController implements Initializable {
                         System.out.println();
                     }
                     if (!tabelBooking.isEmpty()) {
+
                         booking_alat_table.setVisible(true);
+                        booking_alat_table.setEditable(true);
+                        booking_kolom_checkBox.setEditable(true);
                         ObservableList<RowAlat> listBuffer = FXCollections.observableArrayList(tabelBooking);
+
+                        booking_alat_table.setItems(listBuffer);
                         booking_kolom_id.setCellValueFactory(new PropertyValueFactory<RowAlat, Integer>("id_alat"));
                         booking_kolom_nama.setCellValueFactory(new PropertyValueFactory<RowAlat, String>("nama_alat"));
-                        booking_kolom_checkBox.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Model.Peminjaman.RowAlat, Boolean>, ObservableValue<Boolean>>() {
+                        booking_kolom_checkBox.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<RowAlat, Boolean>, ObservableValue<Boolean>>() {
                             @Override
                             public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Model.Peminjaman.RowAlat, Boolean> param) {
-                                return null;
+                                return param.getValue().isChecked();
                             }
                         });
                         booking_kolom_checkBox.setCellFactory(CheckBoxTableCell.forTableColumn(booking_kolom_checkBox));
-                        booking_alat_table.setItems(listBuffer);
+
                     } else {
                         booking_alat_table.setVisible(true);
                     }
                     booking_alat_table.setVisible(true);
+
                 }
             }).start();
         });
@@ -491,6 +497,48 @@ public class NandetechController implements Initializable {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    int [] alat;
+                    int count=0;
+                    for (int i=0;i<booking_alat_table.getItems().size();i++){
+                        if(booking_alat_table.getItems().get(i).isChecked().getValue()){
+                            count++;
+                        }
+                    }
+                    alat = new int[count];
+                    int j=0;
+                    for (int i=0;i<booking_alat_table.getItems().size();i++){
+                        if(booking_alat_table.getItems().get(i).isChecked().getValue()){
+                            alat[j]=booking_alat_table.getItems().get(i).getId_alat();
+                            j++;
+                        }
+                    }
+
+                    peminjaman.addPeminjaman(alat,
+                            booking_idPeminjam_field.getText(),
+                            Timestamp.valueOf(booking_tanggalPeminjaman.getValue().atStartOfDay()).toString(),
+                            Timestamp.valueOf(booking_tanggalPengembalian.getValue().atStartOfDay()).toString(),
+                            booking_deskripsi_field.getText()
+                            );
+
+                    booking_add_button.setVisible(false);
+                    booking_cancel_button.setVisible(false);
+                    booking_idPeminjam_field.setVisible(false);
+                    booking_tanggalPeminjaman.setVisible(false);
+                    booking_tanggalPengembalian.setVisible(false);
+                    booking_deskripsi_field.setVisible(false);
+                    booking_alat_table.setVisible(false);
+
+                    text_1.setVisible(false);
+                    text_2.setVisible(false);
+                    text_3.setVisible(false);
+                    text_4.setVisible(false);
+
+                    peminjaman_search_field.setVisible(true);
+                    peminjaman_combo_search.setVisible(true);
+                    peminjaman_search_button.setVisible(true);
+                    peminjaman_add_button.setVisible(true);
+                    peminjaman_delete_button.setVisible(true);
+                    peminjaman_table.setVisible(true);
 
                 }
             }).start();

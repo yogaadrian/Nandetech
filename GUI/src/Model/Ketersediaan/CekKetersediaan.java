@@ -36,13 +36,13 @@ public class CekKetersediaan {
     public ArrayList<ResultRow> cek(String namaAlat, Timestamp tanggalPinjam){
         ResultSet rs;
         ArrayList<ResultRow> ArRow = new ArrayList<>();
-        String query = "SELECT alat.id_alat, peminjaman.tanggal_peminjaman, alat.kondisi, peminjaman.tanggal_pengembalian FROM peminjaman JOIN peminjaman_alat ON peminjaman.id_peminjaman=peminjaman_alat.id_peminjaman JOIN alat ON alat.id_alat=peminjaman_alat.id_alat WHERE LCASE(alat.nama_alat)=LCASE(\""+namaAlat+"\")";
+        String query = "SELECT alat.nama_alat, alat.id_alat, peminjaman.tanggal_peminjaman, alat.kondisi, peminjaman.tanggal_pengembalian FROM peminjaman RIGHT OUTER JOIN peminjaman_alat ON peminjaman.id_peminjaman=peminjaman_alat.id_peminjaman RIGHT OUTER JOIN alat ON alat.id_alat=peminjaman_alat.id_alat WHERE LCASE(alat.nama_alat)=LCASE(\""+namaAlat+"\")";
         db.connect(path);
         rs = db.fetchData(query);
         try{
             if (rs.next()){
                 do{
-                    ResultRow row = new ResultRow(rs.getInt("alat.id_alat"),rs.getTimestamp("tanggal_peminjaman"),rs.getTimestamp("tanggal_pengembalian"),namaAlat,rs.getString("kondisi"));
+                    ResultRow row = new ResultRow(rs.getInt("alat.id_alat"),rs.getTimestamp("tanggal_peminjaman"),rs.getTimestamp("tanggal_pengembalian"),rs.getString("nama_alat"),rs.getString("kondisi"));
                     ArRow.add(row);
                 } while(rs.next());
                 ArRow = removeDuplicate(ArRow);
@@ -50,8 +50,12 @@ public class CekKetersediaan {
                     if (ArRow.get(i).getKondisi().equalsIgnoreCase("Rusak")){
                         ArRow.get(i).setAvailability("Not Available");
                     } else {
-                        if (ArRow.get(i).getTanggal_pengembalian().after(tanggalPinjam)){
-                            ArRow.get(i).setAvailability("Not Available");
+                        if (ArRow.get(i).getTanggal_pengembalian()!=null) {
+                            if (ArRow.get(i).getTanggal_pengembalian().after(tanggalPinjam)) {
+                                ArRow.get(i).setAvailability("Not Available");
+                            } else {
+                                ArRow.get(i).setAvailability("Available");
+                            }
                         } else {
                             ArRow.get(i).setAvailability("Available");
                         }

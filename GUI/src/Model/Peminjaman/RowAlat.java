@@ -1,17 +1,20 @@
 package Model.Peminjaman;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 /**
  * Created by acel on 16-Feb-16.
  */
 public class RowAlat {
     private int id_alat;
     private String nama_alat;
-    private boolean checked;
+    private BooleanProperty checked;
 
     public RowAlat(int id_alat, String nama_alat, boolean checked) {
         this.id_alat = id_alat;
         this.nama_alat = nama_alat;
-        this.checked = checked;
+        this.checked = new SimpleBooleanProperty(checked);
     }
 
     public int getId_alat() {
@@ -30,11 +33,11 @@ public class RowAlat {
         this.nama_alat = nama_alat;
     }
 
-    public boolean isChecked() {
+    public BooleanProperty isChecked() {
         return checked;
     }
 
     public void setChecked(boolean checked) {
-        this.checked = checked;
+        this.checked.set(checked);
     }
 }
