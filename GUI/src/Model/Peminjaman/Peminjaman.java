@@ -21,7 +21,6 @@ public class Peminjaman {
     }
 
     public ArrayList<ArrayList<String>> semuaAlat (){
-        // ArrayList<String> listAlat = new ArrayList<String>();
         String query = "";
         ResultSet rs;
         ResultSetMetaData rsmd = null;

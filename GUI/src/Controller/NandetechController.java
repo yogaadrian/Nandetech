@@ -6,6 +6,7 @@ package Controller;
 import Model.Ketersediaan.CekKetersediaan;
 import Model.Ketersediaan.ResultRow;
 import Model.Peminjaman.Peminjaman;
+import Model.Peminjaman.RowAlat;
 import Model.Peminjaman.RowPeminjaman;
 import Model.Perbaikan.Perbaikan;
 import Model.Perbaikan.RowPerbaikan;
@@ -15,6 +16,7 @@ import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,8 +36,10 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 
 public class NandetechController implements Initializable {
 
@@ -159,19 +163,16 @@ public class NandetechController implements Initializable {
     private Text text_4;
 
     @FXML
-    private TableView<ResultRow> booking_alat_table;
+    private TableView<RowAlat> booking_alat_table;
 
     @FXML
-    private TableColumn<ResultRow, Integer> booking_kolom_id;
+    private TableColumn<RowAlat, Integer> booking_kolom_id;
 
     @FXML
-    private TableColumn<ResultRow, String> booking_kolom_nama;
+    private TableColumn<RowAlat, String> booking_kolom_nama;
 
     @FXML
-    private TableColumn<ResultRow, String> booking_kolom_status;
-
-    @FXML
-    private TableColumn<ResultRow, CheckBox> booking_kolom_checkBox;
+    private TableColumn<RowAlat, Boolean> booking_kolom_checkBox;
 
     @FXML
     private BarChart<String, Integer> statistik_chart_penggunaan;
@@ -216,7 +217,7 @@ public class NandetechController implements Initializable {
         final Timestamp tanggalPinjam;
         peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
         peminjaman_combo_search.getItems().add(0,"ID Alat");
-        peminjaman_combo_search.getItems().add(0,"ID Peminjam");
+        peminjaman_combo_search.getItems().add(0, "ID Peminjam");
 
         new Thread(new Runnable() {
             @Override
@@ -291,7 +292,7 @@ public class NandetechController implements Initializable {
                     if (!status.isEmpty()){
                         tablePerbaikan.setVisible(true);
                         ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        aRowPerbaikan.add(0, new RowPerbaikan(status.get(0), status.get(1), status.get(3)));
                         ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
                         kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
@@ -370,7 +371,6 @@ public class NandetechController implements Initializable {
         });
 
         /* Peminjaman */
-        /* Peminjaman */
         peminjaman_search_button.setOnAction(event->{
             new Thread(new Runnable() {
                 @Override
@@ -441,16 +441,88 @@ public class NandetechController implements Initializable {
                     text_2.setVisible(true);
                     text_3.setVisible(true);
                     text_4.setVisible(true);
+
                     booking_add_button.setVisible(true);
                     booking_cancel_button.setVisible(true);
                     booking_idPeminjam_field.setVisible(true);
                     booking_tanggalPeminjaman.setVisible(true);
                     booking_tanggalPengembalian.setVisible(true);
                     booking_deskripsi_field.setVisible(true);
+
+                    ArrayList<ArrayList<String>> tabelBookingBuffer = new ArrayList<ArrayList<String>>();
+                    tabelBookingBuffer = peminjaman.semuaAlat();
+                    ArrayList<RowAlat> tabelBooking = new ArrayList<RowAlat>();
+                    System.out.println(tabelBookingBuffer.size());
+                    for (int i=0;i<tabelBookingBuffer.size();i++ ){
+                        tabelBooking.add(new RowAlat(
+                                        Integer.parseInt(tabelBookingBuffer.get(i).get(0)),
+                                        tabelBookingBuffer.get(i).get(1),
+                                        false)
+                        );
+                    }
+                    for (int i=0;i<tabelBookingBuffer.size();i++){
+                        for (int j=0;j<tabelBookingBuffer.get(i).size();j++){
+                            System.out.print(tabelBookingBuffer.get(i).get(j) + "#");
+                        }
+                        System.out.println();
+                    }
+                    if (!tabelBooking.isEmpty()) {
+                        booking_alat_table.setVisible(true);
+                        ObservableList<RowAlat> listBuffer = FXCollections.observableArrayList(tabelBooking);
+                        booking_kolom_id.setCellValueFactory(new PropertyValueFactory<RowAlat, Integer>("id_alat"));
+                        booking_kolom_nama.setCellValueFactory(new PropertyValueFactory<RowAlat, String>("nama_alat"));
+                        booking_kolom_checkBox.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Model.Peminjaman.RowAlat, Boolean>, ObservableValue<Boolean>>() {
+                            @Override
+                            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Model.Peminjaman.RowAlat, Boolean> param) {
+                                return null;
+                            }
+                        });
+                        booking_kolom_checkBox.setCellFactory(CheckBoxTableCell.forTableColumn(booking_kolom_checkBox));
+                        booking_alat_table.setItems(listBuffer);
+                    } else {
+                        booking_alat_table.setVisible(true);
+                    }
                     booking_alat_table.setVisible(true);
                 }
             }).start();
         });
+
+        booking_add_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            }).start();
+        });
+
+        booking_cancel_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    booking_add_button.setVisible(false);
+                    booking_cancel_button.setVisible(false);
+                    booking_idPeminjam_field.setVisible(false);
+                    booking_tanggalPeminjaman.setVisible(false);
+                    booking_tanggalPengembalian.setVisible(false);
+                    booking_deskripsi_field.setVisible(false);
+                    booking_alat_table.setVisible(false);
+
+                    text_1.setVisible(false);
+                    text_2.setVisible(false);
+                    text_3.setVisible(false);
+                    text_4.setVisible(false);
+
+                    peminjaman_search_field.setVisible(true);
+                    peminjaman_combo_search.setVisible(true);
+                    peminjaman_search_button.setVisible(true);
+                    peminjaman_add_button.setVisible(true);
+                    peminjaman_delete_button.setVisible(true);
+                    peminjaman_table.setVisible(true);
+                }
+            }).start();
+        });
+
 
         /*STATISTIK */
         statistik_choice_ID.setOnAction(event->{
