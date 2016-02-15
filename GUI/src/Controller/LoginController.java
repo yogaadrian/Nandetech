@@ -29,6 +29,7 @@ public class LoginController implements Initializable {
     private Label passwordError;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        login_password_button.setDefaultButton(true);
         login_password_button.setOnAction(event->{
             String password=login_password_field.getText();
             if (password.equals("anjing")){

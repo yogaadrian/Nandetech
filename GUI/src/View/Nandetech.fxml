@@ -70,7 +70,6 @@
                               <TableColumn fx:id="peminjaman_kolom_Peminjaman" minWidth="9.0" prefWidth="105.0" text="Peminjaman" />
                               <TableColumn fx:id="peminjaman_kolom_Pengembalian" prefWidth="58.0" text="Pengembalian" />
                               <TableColumn fx:id="peminjaman_kolom_deksripsi" prefWidth="42.0" text="Deskripsi" />
-                              <TableColumn fx:id="peminjaman_kolom_cancel" prefWidth="75.0" text="X" />
                           </columns>
                         </TableView>
                      </children>

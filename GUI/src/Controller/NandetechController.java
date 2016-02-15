@@ -160,6 +160,7 @@ public class NandetechController implements Initializable {
         peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
         peminjaman_combo_search.getItems().add(0,"ID Alat");
         peminjaman_combo_search.getItems().add(0,"ID Peminjam");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -176,6 +177,11 @@ public class NandetechController implements Initializable {
             }
         }).start();
         /* CEK KETERSEDIAAN */
+
+        Nama_alat.setOnAction(event->{
+            ButtonCek.setDefaultButton(true);
+        });
+
         ButtonDate.setOnAction(event -> {
             LocalDate date = ButtonDate.getValue();
         });
@@ -204,6 +210,11 @@ public class NandetechController implements Initializable {
         });
 
         /* PERBAIKAN */
+
+        choiceID.setOnAction(event->{
+            searchButtonID.setDefaultButton(true);
+        });
+
         searchButtonID.setOnAction(event -> {
             new Thread(new Runnable() {
                 @Override
