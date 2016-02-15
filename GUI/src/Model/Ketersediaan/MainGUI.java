@@ -23,10 +23,10 @@ public class MainGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            AnchorPane page = (AnchorPane) FXMLLoader.load(Main.class.getResource("/View/Nandetech.fxml"));
+            AnchorPane page = (AnchorPane) FXMLLoader.load(Main.class.getResource("/View/loginNande.fxml"));
             Scene scene = new Scene(page);
             primaryStage.setScene(scene);
-            primaryStage.setTitle("NandeTech");
+            primaryStage.setTitle("Login NandeTech");
             primaryStage.show();
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

@@ -1,6 +1,5 @@
 package Model.Perbaikan;
-
-import Model.Database.Database;
+import Model.Database.Database ;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ public class Perbaikan {
     public Perbaikan(){
         db = new Database();
     }
-
     public ArrayList<ArrayList<String>> semuaAlat (){
        // ArrayList<String> listAlat = new ArrayList<String>();
         String query = "";
@@ -89,9 +87,6 @@ public class Perbaikan {
         else if(list.get(3).equals("RUSAK")){
             System.out.println("Status barang dengan id = "+list.get(0)+" "+ list.get(3)+"\n Memerlukan perbaikan");
         }
-        else {
-            System.out.println("Status barang dengan id = "+list.get(0)+" "+ list.get(3)+"\n Barang sedang dalam perbaikan");
-        }
         return list;
     }
     public void mulaiPerbaikan(int N){
@@ -107,10 +102,17 @@ public class Perbaikan {
         preparedStmt.setInt(1, N);
         preparedStmt.setTimestamp(2, mulaitime);
         preparedStmt.execute();
+        query = "UPDATE alat SET kondisi= ? WHERE id_alat = ?";
+        PreparedStatement preparedStmts = conn.prepareStatement(query);
+        preparedStmts.setString(1,"RUSAK");
+        preparedStmts.setInt(2, N);
+        preparedStmts.execute();
         conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("Barang sedang dalam perbaikan");
+
     }
     public void selesaiPerbaikan(int N){
         try {
@@ -128,6 +130,11 @@ public class Perbaikan {
             preparedStmt.setTimestamp(3,selesaitime);
             preparedStmt.setInt(4,N);
             preparedStmt.execute();
+            query = "UPDATE alat SET kondisi= ? WHERE id_alat = ?";
+            PreparedStatement preparedStmts = conn.prepareStatement(query);
+            preparedStmts.setString(1, "TIDAK RUSAK");
+            preparedStmts.setInt(2,N);
+            preparedStmts.execute();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
