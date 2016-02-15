@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 
 public class NandetechController implements Initializable {
 
@@ -102,6 +103,9 @@ public class NandetechController implements Initializable {
     private Button peminjaman_add_button;
 
     @FXML
+    private Button peminjaman_delete_button;
+
+    @FXML
     private TableView<RowPeminjaman> peminjaman_table;
 
     @FXML
@@ -123,7 +127,49 @@ public class NandetechController implements Initializable {
     private TableColumn<RowPeminjaman, String> peminjaman_kolom_deskripsi;
 
     @FXML
-    private TableColumn<RowPeminjaman, Button> peminjaman_kolom_cancel;
+    private Button booking_add_button;
+
+    @FXML
+    private Button booking_cancel_button;
+
+    @FXML
+    private TextField booking_idPeminjam_field;
+
+    @FXML
+    private DatePicker booking_tanggalPeminjaman;
+
+    @FXML
+    private DatePicker booking_tanggalPengembalian;
+
+    @FXML
+    private TextField booking_deskripsi_field;
+
+    @FXML
+    private Text text_1;
+
+    @FXML
+    private Text text_2;
+
+    @FXML
+    private Text text_3;
+
+    @FXML
+    private Text text_4;
+
+    @FXML
+    private TableView<ResultRow> booking_alat_table;
+
+    @FXML
+    private TableColumn<ResultRow, Integer> booking_kolom_id;
+
+    @FXML
+    private TableColumn<ResultRow, String> booking_kolom_nama;
+
+    @FXML
+    private TableColumn<ResultRow, String> booking_kolom_status;
+
+    @FXML
+    private TableColumn<ResultRow, CheckBox> booking_kolom_checkBox;
 
     @FXML
     private BarChart<?, ?> statistik_chart_penggunaan;
@@ -157,9 +203,9 @@ public class NandetechController implements Initializable {
         buttonPerbaiki.setDisable(true);
         buttonSelesaiPerbaiki.setDisable(true);
         final Timestamp tanggalPinjam;
-        peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
-        peminjaman_combo_search.getItems().add(0,"ID Alat");
-        peminjaman_combo_search.getItems().add(0,"ID Peminjam");
+        peminjaman_combo_search.getItems().add(0, "ID Peminjaman");
+        peminjaman_combo_search.getItems().add(0, "ID Alat");
+        peminjaman_combo_search.getItems().add(0, "ID Peminjam");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -221,7 +267,7 @@ public class NandetechController implements Initializable {
                     if (!status.isEmpty()){
                         tablePerbaikan.setVisible(true);
                         ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        aRowPerbaikan.add(0, new RowPerbaikan(status.get(0), status.get(1), status.get(3)));
                         ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
                         kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
@@ -324,7 +370,7 @@ public class NandetechController implements Initializable {
                     tabelPeminjamanBuffer = peminjaman.tampilkanPeminjaman(N,pilihan);
                     ArrayList<RowPeminjaman> tabelPeminjaman = new ArrayList<RowPeminjaman>();
                     System.out.println(tabelPeminjamanBuffer.size());
-                    for (int i=1;i<tabelPeminjamanBuffer.size();i++ ){
+                    for (int i=0;i<tabelPeminjamanBuffer.size();i++ ){
                         tabelPeminjaman.add(new RowPeminjaman(Integer.parseInt(tabelPeminjamanBuffer.get(i).get(0)),
                                 Integer.parseInt(tabelPeminjamanBuffer.get(i).get(6)),
                                 tabelPeminjamanBuffer.get(i).get(1),
@@ -334,8 +380,9 @@ public class NandetechController implements Initializable {
                     }
                     for (int i=0;i<tabelPeminjamanBuffer.size();i++){
                         for (int j=0;j<tabelPeminjamanBuffer.get(i).size();j++){
-                            System.out.println(tabelPeminjamanBuffer.get(i).get(j));
+                            System.out.print(tabelPeminjamanBuffer.get(i).get(j) + "#");
                         }
+                        System.out.println();
                     }
                     if (!tabelPeminjaman.isEmpty()) {
                         peminjaman_table.setVisible(true);
@@ -353,6 +400,33 @@ public class NandetechController implements Initializable {
                 }
             }).start();
         });
-    }
 
+        peminjaman_add_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    peminjaman_search_field.setVisible(false);
+                    peminjaman_combo_search.setVisible(false);
+                    peminjaman_search_button.setVisible(false);
+                    peminjaman_add_button.setVisible(false);
+                    peminjaman_delete_button.setVisible(false);
+                    peminjaman_table.setVisible(false);
+
+                    text_1.setVisible(true);
+                    text_2.setVisible(true);
+                    text_3.setVisible(true);
+                    text_4.setVisible(true);
+                    booking_add_button.setVisible(true);
+                    booking_cancel_button.setVisible(true);
+                    booking_idPeminjam_field.setVisible(true);
+                    booking_tanggalPeminjaman.setVisible(true);
+                    booking_tanggalPengembalian.setVisible(true);
+                    booking_deskripsi_field.setVisible(true);
+                    booking_alat_table.setVisible(true);
+                }
+            }).start();
+        });
+
+
+    }
 }

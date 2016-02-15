@@ -65,21 +65,26 @@ public class Peminjaman {
                 //ID Peminjaman
                 query = "SELECT * " +
                         "FROM peminjaman " +
-                        "WHERE id_peminjaman = " + N;
+                        "JOIN peminjaman_alat " +
+                        "WHERE peminjaman.id_peminjaman = " + N + " " +
+                        "AND peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman";
                 break;
             case 2:
                 //ID User
                 query = "SELECT * " +
                         "FROM peminjaman " +
-                        "WHERE id_user = " + N;
+                        "JOIN peminjaman_alat " +
+                        "WHERE peminjaman.id_user = " + N + " " +
+                        "AND peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman";
                 break;
             case 3:
                 //ID Alat
                 query = "SELECT * " +
                         "FROM peminjaman " +
-                        "INNER JOIN peminjaman_alat ON peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman " +
-                        "WHERE id_alat = " + N;
-                break;
+                        "JOIN peminjaman_alat " +
+                        "WHERE id_alat = " + N + " " +
+                        "AND peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman";
+            break;
         }
 
         db.connect(path);
@@ -87,11 +92,14 @@ public class Peminjaman {
 
         try {
             int i=0;
+            /* Add table header */
+            /*
             ArrayList<String> name = new ArrayList<>(1);
             for(int k=0; k<rs.getMetaData().getColumnCount(); k++){
                 name.add(rs.getMetaData().getColumnName(k+1));
             }
             list.add(name);
+            */
             while(rs.next()){
                 int j=0;
                 ArrayList<String> temp = new ArrayList<>(1);
@@ -203,7 +211,8 @@ public class Peminjaman {
         }
         db.closeDatabase();
     }
-
+    /* Module testing */
+    /*
     public static void main(String[] args){
         System.out.println("1. Tampilkan Peminjaman");
         System.out.println("2. Tambahkan Peminjaman");
@@ -255,5 +264,5 @@ public class Peminjaman {
                 p.cancelPeminjaman(id_pn);
                 break;
         }
-    }
+    } */
 }

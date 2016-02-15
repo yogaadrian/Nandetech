@@ -17,6 +17,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.cell.TextFieldTableCell?>
+<?import javafx.scene.control.CheckBox?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.NandetechController">
    <children>
       <TabPane layoutY="-4.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
@@ -58,21 +61,41 @@
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TextField fx:id="peminjaman_search_field" layoutX="227.0" layoutY="64.0" />
-                        <ComboBox fx:id="peminjaman_combo_search" layoutX="83.0" layoutY="64.0" prefHeight="26.0" prefWidth="140.0" />
-                        <Button fx:id="peminjaman_search_button" layoutX="398.0" layoutY="64.0" mnemonicParsing="false" text="Search" />
-                        <Button fx:id="peminjaman_add_button" layoutX="223.0" layoutY="115.0" mnemonicParsing="false" text="Tambah Peminjaman" />
-                        <TableView fx:id="peminjaman_table" layoutX="27.0" layoutY="153.0" prefHeight="200.0" prefWidth="547.0">
-                          <columns>
-                            <TableColumn fx:id="peminjaman_kolom_idPeminjaman" prefWidth="122.0" text="ID Peminjaman" />
-                            <TableColumn fx:id="peminjaman_kolom_idAlat" prefWidth="56.0" text="ID Alat" />
-                              <TableColumn fx:id="peminjaman_kolom_idPeminjam" minWidth="1.0" prefWidth="106.0" text="ID Peminjam" />
-                              <TableColumn fx:id="peminjaman_kolom_Peminjaman" minWidth="9.0" prefWidth="105.0" text="Peminjaman" />
-                              <TableColumn fx:id="peminjaman_kolom_Pengembalian" prefWidth="58.0" text="Pengembalian" />
-                              <TableColumn fx:id="peminjaman_kolom_deksripsi" prefWidth="42.0" text="Deskripsi" />
-                              <TableColumn fx:id="peminjaman_kolom_cancel" prefWidth="75.0" text="X" />
-                          </columns>
-                        </TableView>
+                        <TextField fx:id="peminjaman_search_field" layoutX="227.0" layoutY="50.0" />
+                        <ComboBox fx:id="peminjaman_combo_search" layoutX="83.0" layoutY="50.0" prefHeight="26.0" prefWidth="140.0" />
+                        <Button fx:id="peminjaman_search_button" layoutX="398.0" layoutY="50.0" mnemonicParsing="false" text="Search" />
+                        <Button fx:id="peminjaman_add_button" layoutX="100.0" layoutY="115.0" mnemonicParsing="false" text="Tambah Peminjaman" />
+                        <Button fx:id="peminjaman_delete_button" layoutX="400.0" layoutY="115.0" mnemonicParsing="false" text="Hapus Peminjaman" />
+                         <TableView fx:id="peminjaman_table" layoutX="27.0" layoutY="153.0" prefHeight="200.0" prefWidth="547.0">
+                             <columns>
+                                 <TableColumn fx:id="peminjaman_kolom_idPeminjaman" prefWidth="95.0" text="ID Peminjaman" />
+                                 <TableColumn fx:id="peminjaman_kolom_idAlat" prefWidth="56.0" text="ID Alat" />
+                                 <TableColumn fx:id="peminjaman_kolom_idPeminjam" minWidth="1.0" prefWidth="107.0" text="ID Peminjam" />
+                                 <TableColumn fx:id="peminjaman_kolom_Peminjaman" minWidth="9.0" prefWidth="107.0" text="Peminjaman" />
+                                 <TableColumn fx:id="peminjaman_kolom_Pengembalian" prefWidth="90.0" text="Pengembalian" />
+                                 <TableColumn fx:id="peminjaman_kolom_deskripsi" prefWidth="90.0" text="Deskripsi" />
+                             </columns>
+                         </TableView>
+
+                         <Button fx:id="booking_add_button" layoutX="120.0" layoutY="320.0" mnemonicParsing="false" text="Tambah" visible="false"/>
+                         <Button fx:id="booking_cancel_button" layoutX="380.0" layoutY="320.0" mnemonicParsing="false" text="Batal" visible="false"/>
+
+                         <Text fx:id="text_1" visible="false" layoutX="90" layoutY="95" text="ID Peminjam"></Text>
+                         <TextField fx:id="booking_idPeminjam_field" layoutX="90.0" layoutY="100.0" visible="false"/>
+                         <Text fx:id="text_2" visible="false" layoutX="90" layoutY="145" text="Tanggal Peminjaman"></Text>
+                         <DatePicker fx:id="booking_tanggalPeminjaman" layoutX="90.0" layoutY="150.0" visible="false"/>
+                         <Text fx:id="text_3" visible="false" layoutX="90" layoutY="195" text="Tanggal Pengembalian"></Text>
+                         <DatePicker fx:id="booking_tanggalPengembalian" layoutX="90.0" layoutY="200.0" visible="false"/>
+                         <Text fx:id="text_4" visible="false" layoutX="90" layoutY="245" text="Deskripsi"></Text>
+                         <TextField fx:id="booking_deskripsi_field" layoutX="90.0" layoutY="250.0" visible="false"/>
+
+                         <TableView fx:id="booking_alat_table" layoutX="300.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" visible="false">
+                             <columns>
+                                 <TableColumn fx:id="booking_kolom_id" prefWidth="60.0" text="ID Alat" />
+                                 <TableColumn fx:id="booking_kolom_nama" minWidth="50.0" prefWidth="100.0" text="Nama" />
+                                 <TableColumn fx:id="booking_kolom_checkBox" prefWidth="40" text="Check"/>
+                             </columns>
+                         </TableView>
                      </children>
                   </AnchorPane>
                </content></Tab>

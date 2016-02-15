@@ -9,6 +9,13 @@ import java.sql.Timestamp;
  * Created by jsavigny on 2/15/16.
  */
 public class RowPeminjaman {
+    private int idPeminjaman;
+    private int idAlat;
+    private String idPeminjam;
+    private Timestamp tanggalPeminjaman;
+    private Timestamp tanggalPengembalian;
+    private String deskripsi;
+
     public RowPeminjaman(int idPeminjaman, int idAlat, String idPeminjam, Timestamp tanggalPeminjaman, Timestamp tanggalPengembalian, String deskripsi) {
         this.idPeminjaman = idPeminjaman;
         this.idAlat = idAlat;
@@ -67,11 +74,6 @@ public class RowPeminjaman {
     }
 
 
-    private int idPeminjaman;
-    private int idAlat;
-    private String idPeminjam;
-    private Timestamp tanggalPeminjaman;
-    private Timestamp tanggalPengembalian;
-    private String deskripsi;
+
 
 }
