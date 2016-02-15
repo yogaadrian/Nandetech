@@ -19,6 +19,7 @@ public class Perbaikan {
     public Perbaikan(){
         db = new Database();
     }
+
     public ArrayList<ArrayList<String>> semuaAlat (){
        // ArrayList<String> listAlat = new ArrayList<String>();
         String query = "";

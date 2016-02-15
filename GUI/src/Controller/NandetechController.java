@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -78,6 +79,9 @@ public class NandetechController implements Initializable {
     @FXML
     private Label labelKondisiID;
 
+    @FXML
+    private ComboBox<ArrayList<String>> choiceID;
+
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         CekKetersediaan check = new CekKetersediaan();
         Perbaikan perbaikan = new Perbaikan();
@@ -85,7 +89,21 @@ public class NandetechController implements Initializable {
         buttonPerbaiki.setDisable(true);
         buttonSelesaiPerbaiki.setDisable(true);
         final Timestamp tanggalPinjam;
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<ArrayList<String>> listAlat = perbaikan.semuaAlat();
+                ArrayList<String> viewableAlat = new ArrayList<String>();
+                for (int i=0;i<listAlat.size();i++){
+                    viewableAlat.add(i,listAlat.get(i).get(0)+" | "+listAlat.get(i).get(1));
+                    listAlat.get(i).remove(2);
+                    listAlat.get(i).remove(2);
+                }
+                ObservableList<ArrayList<String>> observableAlat = FXCollections.observableArrayList(listAlat);
+                choiceID.getItems().clear();
+                choiceID.setItems(observableAlat);
+            }
+        }).start();
         ButtonDate.setOnAction(event -> {
             LocalDate date = ButtonDate.getValue();
         });
@@ -112,17 +130,20 @@ public class NandetechController implements Initializable {
 
         });
 
+
+
         searchButtonID.setOnAction(event -> {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     ArrayList<String> status;
                     int N;
-                    try {
+                    /*try {
                         N = Integer.parseInt(searchIDField.getText());
                     } catch (NumberFormatException ex){
                         N=0;
-                    }
+                    }*/
+                    N = Integer.parseInt(choiceID.getValue().get(0));
                     status=perbaikan.tampilkanPerbaikan(N);
                     if (!status.isEmpty()){
                         tablePerbaikan.setVisible(true);
@@ -132,11 +153,25 @@ public class NandetechController implements Initializable {
                         kolomKondisiPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(3)));
                         tablePerbaikan.setItems(listBuffer);
                         if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
-
+                            buttonPerbaiki.setDisable(false);
+                            buttonSelesaiPerbaiki.setDisable(true);
+                        } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
+                            buttonPerbaiki.setDisable(true);
+                            buttonSelesaiPerbaiki.setDisable(false);
                         }
                     }
                 }
             }).start();
+
+            buttonPerbaiki.setOnAction(event1 -> {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int N = Integer.parseInt(kolomIDPerbaikan.getCellObservableValue(0).getValue());
+                        perbaikan.mulaiPerbaikan(N);
+                    }
+                }).start();
+            });
 
         });
     }
