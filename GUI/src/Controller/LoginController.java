@@ -32,7 +32,7 @@ public class LoginController implements Initializable {
         login_password_button.setDefaultButton(true);
         login_password_button.setOnAction(event->{
             String password=login_password_field.getText();
-            if (password.equals("anjing")){
+            if (password.equals("adminduktek")){
                 Parent root;
                 try {
                     root = FXMLLoader.load(getClass().getResource("../View/Nandetech.fxml"));
