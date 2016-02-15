@@ -3,6 +3,7 @@ package Model.Peminjaman;
 import Model.Database.Database;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -17,7 +18,42 @@ public class Peminjaman {
         db = new Database();
     }
 
-    public void tampilkanPeminjaman(int N, int pilihan){
+    public ArrayList<ArrayList<String>> semuaAlat (){
+        // ArrayList<String> listAlat = new ArrayList<String>();
+        String query = "";
+        ResultSet rs;
+        ResultSetMetaData rsmd = null;
+        int i = 1;
+        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<ArrayList<String>> listAlat = new ArrayList<ArrayList<String>>();
+        //select semua alat
+        query = "SELECT * " +
+                "FROM alat ";
+        db.connect(path);
+        rs = db.fetchData(query);
+        try {
+            rsmd = rs.getMetaData();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            while(rs.next()){
+                for(int j=0; j<rsmd.getColumnCount(); j++) {
+                    list.add(rs.getString(i));
+                    i++;
+                }
+                listAlat.add(list);
+                i=1;
+                list = new ArrayList<String>();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(listAlat);
+        return listAlat;
+    }
+
+    public ArrayList<ArrayList<String>> tampilkanPeminjaman(int N, int pilihan){
         String query = "";
         ResultSet rs;
         ArrayList<ArrayList<String>> list = new ArrayList<>(1);
@@ -76,6 +112,7 @@ public class Peminjaman {
             }
             System.out.println();
         }
+        return list;
     }
 
     public void cancelPeminjaman(int id_peminjaman){

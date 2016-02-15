@@ -15,11 +15,13 @@ public class Perbaikan {
     private Date selesai;
     private Timestamp mulaitime;
     private Timestamp selesaitime;
-    public Perbaikan(){
+
+    public Perbaikan() {
         db = new Database();
     }
-    public ArrayList<ArrayList<String>> semuaAlat (){
-       // ArrayList<String> listAlat = new ArrayList<String>();
+
+    public ArrayList<ArrayList<String>> semuaAlat() {
+        // ArrayList<String> listAlat = new ArrayList<String>();
         String query = "";
         ResultSet rs;
         ResultSetMetaData rsmd = null;
@@ -37,13 +39,13 @@ public class Perbaikan {
             e.printStackTrace();
         }
         try {
-            while(rs.next()){
-                for(int j=0; j<rsmd.getColumnCount(); j++) {
+            while (rs.next()) {
+                for (int j = 0; j < rsmd.getColumnCount(); j++) {
                     list.add(rs.getString(i));
                     i++;
                 }
                 listAlat.add(list);
-                i=1;
+                i = 1;
                 list = new ArrayList<String>();
             }
         } catch (SQLException e) {
@@ -52,16 +54,17 @@ public class Perbaikan {
         System.out.println(listAlat);
         return listAlat;
     }
-    public ArrayList<String> tampilkanPerbaikan(int N){
+
+    public ArrayList<String> tampilkanPerbaikan(int N) {
         String query = "";
         ResultSet rs;
         ResultSetMetaData rsmd = null;
         int i = 1;
         ArrayList<String> list = new ArrayList<String>();
-                //ID alat input yang dicari
-                query = "SELECT * " +
-                        "FROM alat " +
-                        "WHERE id_alat = " + N;
+        //ID alat input yang dicari
+        query = "SELECT * " +
+                "FROM alat " +
+                "WHERE id_alat = " + N;
         db.connect(path);
         rs = db.fetchData(query);
         try {
@@ -70,8 +73,8 @@ public class Perbaikan {
             e.printStackTrace();
         }
         try {
-            while(rs.next()){
-                for(int j=0; j<rsmd.getColumnCount(); j++) {
+            while (rs.next()) {
+                for (int j = 0; j < rsmd.getColumnCount(); j++) {
                     list.add(rs.getString(i));
                     i++;
                 }
@@ -81,40 +84,41 @@ public class Perbaikan {
         }
         System.out.println(list);
         System.out.println();
-        if(list.get(3).equals("TIDAK RUSAK")){
-            System.out.println("Status barang dengan id = "+list.get(0)+" "+ list.get(3)+"\nTidak memerlukan perbaikan");
-        }
-        else if(list.get(3).equals("RUSAK")){
-            System.out.println("Status barang dengan id = "+list.get(0)+" "+ list.get(3)+"\n Memerlukan perbaikan");
+        if (list.get(3).equals("TIDAK RUSAK")) {
+            System.out.println("Status barang dengan id = " + list.get(0) + " " + list.get(3) + "\nTidak memerlukan perbaikan");
+        } else if (list.get(3).equals("RUSAK")) {
+            System.out.println("Status barang dengan id = " + list.get(0) + " " + list.get(3) + "\n Memerlukan perbaikan");
         }
         return list;
     }
-    public void mulaiPerbaikan(int N){
+
+    public void mulaiPerbaikan(int N) {
         try {
             Connection conn = DriverManager.getConnection(path, "root", "");
-        mulai = new java.util.Date();
-        mulaitime = new Timestamp(mulai.getTime());
-        System.out.println(mulaitime);
-        String query = "";
-        //query mulai perbaikan alat
-        query = "INSERT INTO perbaikan (id_alat,tanggal_masuk,tanggal_keluar)"+"values (?,NULL,NULL) ON DUPLICATE KEY UPDATE tanggal_masuk=?";
-        PreparedStatement preparedStmt = conn.prepareStatement(query);
-        preparedStmt.setInt(1, N);
-        preparedStmt.setTimestamp(2, mulaitime);
-        preparedStmt.execute();
-        query = "UPDATE alat SET kondisi= ? WHERE id_alat = ?";
-        PreparedStatement preparedStmts = conn.prepareStatement(query);
-        preparedStmts.setString(1,"RUSAK");
-        preparedStmts.setInt(2, N);
-        preparedStmts.execute();
-        conn.close();
+            mulai = new java.util.Date();
+            mulaitime = new Timestamp(mulai.getTime());
+            System.out.println(mulaitime);
+            String query = "";
+            //query mulai perbaikan alat
+            query = "INSERT INTO perbaikan (id_alat,tanggal_masuk,tanggal_keluar)" + "values (?,NULL,NULL) ON DUPLICATE KEY UPDATE tanggal_masuk=?";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setInt(1, N);
+            preparedStmt.setTimestamp(2, mulaitime);
+            preparedStmt.execute();
+            query = "UPDATE alat SET kondisi= ? WHERE id_alat = ?";
+            PreparedStatement preparedStmts = conn.prepareStatement(query);
+            preparedStmts.setString(1, "RUSAK");
+            preparedStmts.setInt(2, N);
+            preparedStmts.execute();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         System.out.println("Barang sedang dalam perbaikan");
 
     }
-    public void selesaiPerbaikan(int N){
+
+    public void selesaiPerbaikan(int N) {
         try {
             Connection conn = DriverManager.getConnection(path, "root", "");
             selesai = new java.util.Date();
@@ -123,17 +127,15 @@ public class Perbaikan {
             System.out.println(selesaitime);
             String query = "";
             //query selesai perbaikan alat
-            query = "UPDATE perbaikan SET id_alat = ?, tanggal_masuk = ?, tanggal_keluar = ? WHERE id_alat = ?";
+            query = "UPDATE perbaikan SET tanggal_keluar = ? WHERE id_alat = ? AND tanggal_keluar is NULL";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setInt(1,N);
-            preparedStmt.setTimestamp(2,mulaitime);
-            preparedStmt.setTimestamp(3,selesaitime);
-            preparedStmt.setInt(4,N);
+            preparedStmt.setTimestamp(1, selesaitime);
+            preparedStmt.setInt(2, N);
             preparedStmt.execute();
-            query = "UPDATE alat SET kondisi= ? WHERE id_alat = ?";
+            query = "UPDATE alat SET kondisi= ? WHERE id_alat = (SELECT id_alat from perbaikan WHERE tanggal_keluar = ?)";
             PreparedStatement preparedStmts = conn.prepareStatement(query);
             preparedStmts.setString(1, "TIDAK RUSAK");
-            preparedStmts.setInt(2,N);
+            preparedStmts.setTimestamp(2, selesaitime);
             preparedStmts.execute();
             conn.close();
         } catch (SQLException e) {

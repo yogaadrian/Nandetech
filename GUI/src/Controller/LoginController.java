@@ -31,24 +31,19 @@ public class LoginController implements Initializable {
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         login_password_button.setOnAction(event->{
             String password=login_password_field.getText();
-            if (password.equals("Adm1nDuktek")){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Parent root;
-                        try {
-                            root = FXMLLoader.load(getClass().getResource("../View/Nandetech.fxml"));
-                            Stage stage = new Stage();
-                            Scene scene = new Scene(root);
-                            stage.setTitle("Nandetech");
-                            stage.setScene(scene);
-                            stage.show();
-                            ((Node)(event.getSource())).getScene().getWindow().hide();
-                        } catch (IOException exc) {
-                            exc.printStackTrace();
-                        }
-                    }
-                }).start();
+            if (password.equals("anjing")){
+                Parent root;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("../View/Nandetech.fxml"));
+                    Stage stage = new Stage();
+                    Scene scene = new Scene(root);
+                    stage.setTitle("Nandetech");
+                    stage.setScene(scene);
+                    stage.show();
+                    ((Node)(event.getSource())).getScene().getWindow().hide();
+                } catch (IOException exc) {
+                    exc.printStackTrace();
+                }
             } else {
                 passwordError.setVisible(true);
             }

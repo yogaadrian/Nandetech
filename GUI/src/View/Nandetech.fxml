@@ -59,7 +59,7 @@
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
                         <TextField fx:id="peminjaman_search_field" layoutX="227.0" layoutY="64.0" />
-                        <ComboBox fx:id="peminjaman_combo_search" layoutX="118.0" layoutY="64.0" prefHeight="26.0" prefWidth="98.0" />
+                        <ComboBox fx:id="peminjaman_combo_search" layoutX="83.0" layoutY="64.0" prefHeight="26.0" prefWidth="140.0" />
                         <Button fx:id="peminjaman_search_button" layoutX="398.0" layoutY="64.0" mnemonicParsing="false" text="Search" />
                         <Button fx:id="peminjaman_add_button" layoutX="223.0" layoutY="115.0" mnemonicParsing="false" text="Tambah Peminjaman" />
                         <TableView fx:id="peminjaman_table" layoutX="27.0" layoutY="153.0" prefHeight="200.0" prefWidth="547.0">
@@ -68,8 +68,9 @@
                             <TableColumn fx:id="peminjaman_kolom_idAlat" prefWidth="56.0" text="ID Alat" />
                               <TableColumn fx:id="peminjaman_kolom_idPeminjam" minWidth="1.0" prefWidth="106.0" text="ID Peminjam" />
                               <TableColumn fx:id="peminjaman_kolom_Peminjaman" minWidth="9.0" prefWidth="105.0" text="Peminjaman" />
-                              <TableColumn fx:id="peminjaman_kolom_Pengembalian" prefWidth="116.0" text="Pengembalian" />
-                              <TableColumn fx:id="peminjaman_kolom_cancel" prefWidth="41.0" text="X" />
+                              <TableColumn fx:id="peminjaman_kolom_Pengembalian" prefWidth="58.0" text="Pengembalian" />
+                              <TableColumn fx:id="peminjaman_kolom_deksripsi" prefWidth="42.0" text="Deskripsi" />
+                              <TableColumn fx:id="peminjaman_kolom_cancel" prefWidth="75.0" text="X" />
                           </columns>
                         </TableView>
                      </children>

@@ -5,9 +5,14 @@ package Controller;
  */
 import Model.Ketersediaan.CekKetersediaan;
 import Model.Ketersediaan.ResultRow;
+import Model.Peminjaman.Peminjaman;
+import Model.Peminjaman.RowPeminjaman;
 import Model.Perbaikan.Perbaikan;
 import Model.Perbaikan.RowPerbaikan;
+import com.sun.rowset.internal.Row;
+import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -88,7 +93,7 @@ public class NandetechController implements Initializable {
     private TextField peminjaman_search_field;
 
     @FXML
-    private ComboBox<?> peminjaman_combo_search;
+    private ComboBox<String> peminjaman_combo_search;
 
     @FXML
     private Button peminjaman_search_button;
@@ -97,25 +102,28 @@ public class NandetechController implements Initializable {
     private Button peminjaman_add_button;
 
     @FXML
-    private TableView<?> peminjaman_table;
+    private TableView<RowPeminjaman> peminjaman_table;
 
     @FXML
-    private TableColumn<?, ?> peminjaman_kolom_idPeminjaman;
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_idPeminjaman;
 
     @FXML
-    private TableColumn<?, ?> peminjaman_kolom_idAlat;
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_idAlat;
 
     @FXML
-    private TableColumn<?, ?> peminjaman_kolom_idPeminjam;
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_idPeminjam;
 
     @FXML
-    private TableColumn<?, ?> peminjaman_kolom_Peminjaman;
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_Peminjaman;
 
     @FXML
-    private TableColumn<?, ?> peminjaman_kolom_Pengembalian;
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_Pengembalian;
 
     @FXML
-    private TableColumn<?, ?> peminjaman_kolom_cancel;
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_deskripsi;
+
+    @FXML
+    private TableColumn<RowPeminjaman, Button> peminjaman_kolom_cancel;
 
     @FXML
     private BarChart<?, ?> statistik_chart_penggunaan;
@@ -144,10 +152,14 @@ public class NandetechController implements Initializable {
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         CekKetersediaan check = new CekKetersediaan();
         Perbaikan perbaikan = new Perbaikan();
+        Peminjaman peminjaman = new Peminjaman();
         TableCek.setVisible(false);
         buttonPerbaiki.setDisable(true);
         buttonSelesaiPerbaiki.setDisable(true);
         final Timestamp tanggalPinjam;
+        peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
+        peminjaman_combo_search.getItems().add(0,"ID Alat");
+        peminjaman_combo_search.getItems().add(0,"ID Peminjam");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -215,12 +227,6 @@ public class NandetechController implements Initializable {
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
                         kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
                         tablePerbaikan.setItems(listBuffer);
-                        /*ObservableList<String> listBuffer = FXCollections.observableArrayList(Arrays.asList("Supaya arraylist nya size 1"));
-                        kolomIDPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(0)));
-                        kolomNamaPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(1)));
-                        kolomKondisiPerbaikan.setCellValueFactory(x->new SimpleObjectProperty<String>(status.get(3)));
-                        System.out.println(status.get(3));
-                        tablePerbaikan.setItems(listBuffer);*/
                         if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
                             buttonPerbaiki.setDisable(false);
                             buttonSelesaiPerbaiki.setDisable(true);
@@ -231,39 +237,121 @@ public class NandetechController implements Initializable {
                     }
                 }
             }).start();
+        });
 
-            buttonPerbaiki.setOnAction(event1 -> {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ArrayList<String> status;
-                        int N = Integer.parseInt(kolomIDPerbaikan.getCellObservableValue(0).getValue());
-                        perbaikan.mulaiPerbaikan(N);
-                        status=perbaikan.tampilkanPerbaikan(N);
-                        if (!status.isEmpty()){
-                            tablePerbaikan.setVisible(true);
-                            ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-
-                            aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
-
-                            ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
-                            kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
-                            kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
-                            kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
-                            tablePerbaikan.setItems(listBuffer);
+        buttonPerbaiki.setOnAction(event1 -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<String> status;
+                    int N = Integer.parseInt(kolomIDPerbaikan.getCellObservableValue(0).getValue());
+                    perbaikan.mulaiPerbaikan(N);
+                    status=perbaikan.tampilkanPerbaikan(N);
+                    if (!status.isEmpty()){
+                        tablePerbaikan.setVisible(true);
+                        ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
+                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
+                        kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
+                        kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
+                        kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
                         tablePerbaikan.setItems(listBuffer);
-                            if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
-                                buttonPerbaiki.setDisable(false);
-                                buttonSelesaiPerbaiki.setDisable(true);
-                            } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
-                                buttonPerbaiki.setDisable(true);
-                                buttonSelesaiPerbaiki.setDisable(false);
-                            }
+                        tablePerbaikan.setItems(listBuffer);
+                        if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
+                            buttonPerbaiki.setDisable(false);
+                            buttonSelesaiPerbaiki.setDisable(true);
+                        } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
+                            buttonPerbaiki.setDisable(true);
+                            buttonSelesaiPerbaiki.setDisable(false);
                         }
                     }
-                }).start();
-            });
+                }
+            }).start();
+        });
 
+        buttonSelesaiPerbaiki.setOnAction(event1 -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<String> status;
+                    int N = Integer.parseInt(kolomIDPerbaikan.getCellObservableValue(0).getValue());
+                    perbaikan.selesaiPerbaikan(N);
+                    status=perbaikan.tampilkanPerbaikan(N);
+                    if (!status.isEmpty()){
+                        tablePerbaikan.setVisible(true);
+                        ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
+                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
+                        kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
+                        kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
+                        kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
+                        tablePerbaikan.setItems(listBuffer);
+                        tablePerbaikan.setItems(listBuffer);
+                        if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
+                            buttonPerbaiki.setDisable(false);
+                            buttonSelesaiPerbaiki.setDisable(true);
+                        } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
+                            buttonPerbaiki.setDisable(true);
+                            buttonSelesaiPerbaiki.setDisable(false);
+                        }
+                    }
+                }
+            }).start();
+        });
+
+        /* Peminjaman */
+        peminjaman_search_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int pilihan;
+                    int N;
+                    if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Peminjaman")){
+                        pilihan=1;
+                    } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID User")){
+                        pilihan=2;
+                    } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Alat")){
+                        pilihan=3;
+                    } else {
+                        pilihan=2;
+                    }
+                    try {
+                        N = Integer.parseInt(peminjaman_search_field.getText());
+                    } catch (Exception e){
+                        N = 0;
+                    }
+                    ArrayList<ArrayList<String>> tabelPeminjamanBuffer = new ArrayList<ArrayList<String>>();
+                    tabelPeminjamanBuffer = peminjaman.tampilkanPeminjaman(N,pilihan);
+                    ArrayList<RowPeminjaman> tabelPeminjaman = new ArrayList<RowPeminjaman>();
+                    System.out.println(tabelPeminjamanBuffer.size());
+                    for (int i=1;i<tabelPeminjamanBuffer.size();i++ ){
+                        tabelPeminjaman.add(new RowPeminjaman(Integer.parseInt(tabelPeminjamanBuffer.get(i).get(0)),
+                                Integer.parseInt(tabelPeminjamanBuffer.get(i).get(6)),
+                                tabelPeminjamanBuffer.get(i).get(1),
+                                Timestamp.valueOf(tabelPeminjamanBuffer.get(i).get(3)),
+                                Timestamp.valueOf(tabelPeminjamanBuffer.get(i).get(4)),
+                                tabelPeminjamanBuffer.get(i).get(2)));
+                    }
+                    for (int i=0;i<tabelPeminjamanBuffer.size();i++){
+                        for (int j=0;j<tabelPeminjamanBuffer.get(i).size();j++){
+                            System.out.println(tabelPeminjamanBuffer.get(i).get(j));
+                        }
+                    }
+                    if (!tabelPeminjaman.isEmpty()) {
+                        peminjaman_table.setVisible(true);
+                        ObservableList<RowPeminjaman> listBuffer = FXCollections.observableArrayList(tabelPeminjaman);
+                        peminjaman_kolom_idPeminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjaman"));
+                        peminjaman_kolom_idAlat.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idAlat"));
+                        peminjaman_kolom_idPeminjam.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjam"));
+                        peminjaman_kolom_Peminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPeminjaman"));
+                        peminjaman_kolom_Pengembalian.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPengembalian"));
+                        peminjaman_kolom_deskripsi.setCellValueFactory(new PropertyValueFactory<RowPeminjaman,String>("deskripsi"));
+                        peminjaman_table.setItems(listBuffer);
+                    } else {
+                        peminjaman_table.setVisible(true);
+                    }
+                }
+            }).start();
         });
     }
 
