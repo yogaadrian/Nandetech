@@ -40,6 +40,7 @@ public class LoginController implements Initializable {
                     Scene scene = new Scene(root);
                     stage.setTitle("Nandetech");
                     stage.setScene(scene);
+                    stage.setResizable(false);
                     stage.show();
                     ((Node)(event.getSource())).getScene().getWindow().hide();
                 } catch (IOException exc) {

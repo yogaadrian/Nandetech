@@ -32,6 +32,7 @@ public class MainGUI extends Application {
             Scene scene = new Scene(page);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Login NandeTech");
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
