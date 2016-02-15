@@ -103,6 +103,11 @@
                      </children></AnchorPane>
               </content>
             </Tab>
+            <Tab text="Tentang">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
             <Tab text="Statistik">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -160,8 +165,8 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <ComboBox fx:id="statistik_choice_ID" layoutX="189.0" layoutY="22.0" prefWidth="150.0" />
-                                          <Button layoutX="347.0" layoutY="22.0" mnemonicParsing="false" text="Search" />
-                                          <BarChart fx:id="statistik_chart_perbaikan" layoutX="108.0" layoutY="54.0" prefHeight="224.0" prefWidth="383.0">
+                                          <Button fx:id="searchStatistikPerbaikan" layoutX="347.0" layoutY="22.0" mnemonicParsing="false" text="Search" />
+                                          <BarChart fx:id="statistik_chart_perbaikan" barGap="5.0" categoryGap="5.0" layoutX="108.0" layoutY="54.0" prefHeight="224.0" prefWidth="383.0">
                                              <xAxis>
                                                 <CategoryAxis side="BOTTOM" />
                                              </xAxis>
@@ -169,6 +174,11 @@
                                                 <NumberAxis side="LEFT" />
                                              </yAxis>
                                           </BarChart>
+                                          <Label layoutX="97.0" layoutY="19.0" prefHeight="35.0" prefWidth="61.0" text="ID Alat">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -176,11 +186,6 @@
                           </panes>
                         </Accordion>
                      </children></AnchorPane>
-              </content>
-            </Tab>
-            <Tab text="Tentang">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
         </tabs>

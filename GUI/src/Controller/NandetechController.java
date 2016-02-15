@@ -9,6 +9,7 @@ import Model.Peminjaman.Peminjaman;
 import Model.Peminjaman.RowPeminjaman;
 import Model.Perbaikan.Perbaikan;
 import Model.Perbaikan.RowPerbaikan;
+import Model.Statistik.Statistik;
 import com.sun.rowset.internal.Row;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import javafx.application.Platform;
@@ -21,9 +22,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -126,7 +129,7 @@ public class NandetechController implements Initializable {
     private TableColumn<RowPeminjaman, Button> peminjaman_kolom_cancel;
 
     @FXML
-    private BarChart<?, ?> statistik_chart_penggunaan;
+    private BarChart<String, Integer> statistik_chart_penggunaan;
 
     @FXML
     private TextField statistik_nama_alat;
@@ -135,7 +138,7 @@ public class NandetechController implements Initializable {
     private Button statistik_search_nama;
 
     @FXML
-    private BarChart<?, ?> statistik_chart_penggunaankelompok;
+    private BarChart<String, Integer> statistik_chart_penggunaankelompok;
 
     @FXML
     private TextField statistik_golongan;
@@ -144,35 +147,42 @@ public class NandetechController implements Initializable {
     private Button statistik_search_golongan;
 
     @FXML
-    private ComboBox<?> statistik_choice_ID;
+    private ComboBox<ArrayList<String>> statistik_choice_ID;
 
     @FXML
-    private BarChart<?, ?> statistik_chart_perbaikan;
+    private BarChart<String, Integer> statistik_chart_perbaikan;
+
+    @FXML
+    private Button searchStatistikPerbaikan;
+
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         CekKetersediaan check = new CekKetersediaan();
         Perbaikan perbaikan = new Perbaikan();
+        Statistik statistik = new Statistik();
         Peminjaman peminjaman = new Peminjaman();
         TableCek.setVisible(false);
         buttonPerbaiki.setDisable(true);
         buttonSelesaiPerbaiki.setDisable(true);
         final Timestamp tanggalPinjam;
-        peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
-        peminjaman_combo_search.getItems().add(0,"ID Alat");
-        peminjaman_combo_search.getItems().add(0,"ID Peminjam");
+        peminjaman_combo_search.getItems().add(0, "ID Peminjaman");
+        peminjaman_combo_search.getItems().add(0, "ID Alat");
+        peminjaman_combo_search.getItems().add(0, "ID Peminjam");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 ArrayList<ArrayList<String>> listAlat = perbaikan.semuaAlat();
                 ArrayList<String> viewableAlat = new ArrayList<String>();
-                for (int i=0;i<listAlat.size();i++){
-                    viewableAlat.add(i,listAlat.get(i).get(0)+" | "+listAlat.get(i).get(1));
+                for (int i = 0; i < listAlat.size(); i++) {
+                    viewableAlat.add(i, listAlat.get(i).get(0) + " | " + listAlat.get(i).get(1));
                     listAlat.get(i).remove(2);
                     listAlat.get(i).remove(2);
                 }
                 ObservableList<ArrayList<String>> observableAlat = FXCollections.observableArrayList(listAlat);
                 choiceID.getItems().clear();
                 choiceID.setItems(observableAlat);
+                statistik_choice_ID.getItems().clear();
+                statistik_choice_ID.setItems(observableAlat);
             }
         }).start();
         /* CEK KETERSEDIAAN */
@@ -184,7 +194,7 @@ public class NandetechController implements Initializable {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (ButtonDate.getValue()!=null) {
+                    if (ButtonDate.getValue() != null) {
                         ArrayList<ResultRow> tableOut = check.cek(Nama_alat.getText(), Timestamp.valueOf(ButtonDate.getValue().atStartOfDay()));
                         if (!tableOut.isEmpty()) {
                             TableCek.setVisible(true);
@@ -217,17 +227,17 @@ public class NandetechController implements Initializable {
                     }*/
                     N = Integer.parseInt(choiceID.getValue().get(0));
                     System.out.println(N);
-                    status=perbaikan.tampilkanPerbaikan(N);
-                    if (!status.isEmpty()){
+                    status = perbaikan.tampilkanPerbaikan(N);
+                    if (!status.isEmpty()) {
                         tablePerbaikan.setVisible(true);
                         ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        aRowPerbaikan.add(0, new RowPerbaikan(status.get(0), status.get(1), status.get(3)));
                         ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
                         kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
                         kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
                         tablePerbaikan.setItems(listBuffer);
-                        if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
+                        if (status.get(3).equalsIgnoreCase("TIDAK RUSAK")) {
                             buttonPerbaiki.setDisable(false);
                             buttonSelesaiPerbaiki.setDisable(true);
                         } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
@@ -246,18 +256,18 @@ public class NandetechController implements Initializable {
                     ArrayList<String> status;
                     int N = Integer.parseInt(kolomIDPerbaikan.getCellObservableValue(0).getValue());
                     perbaikan.mulaiPerbaikan(N);
-                    status=perbaikan.tampilkanPerbaikan(N);
-                    if (!status.isEmpty()){
+                    status = perbaikan.tampilkanPerbaikan(N);
+                    if (!status.isEmpty()) {
                         tablePerbaikan.setVisible(true);
                         ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        aRowPerbaikan.add(0, new RowPerbaikan(status.get(0), status.get(1), status.get(3)));
                         ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
                         kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
                         kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
                         tablePerbaikan.setItems(listBuffer);
                         tablePerbaikan.setItems(listBuffer);
-                        if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
+                        if (status.get(3).equalsIgnoreCase("TIDAK RUSAK")) {
                             buttonPerbaiki.setDisable(false);
                             buttonSelesaiPerbaiki.setDisable(true);
                         } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
@@ -276,18 +286,18 @@ public class NandetechController implements Initializable {
                     ArrayList<String> status;
                     int N = Integer.parseInt(kolomIDPerbaikan.getCellObservableValue(0).getValue());
                     perbaikan.selesaiPerbaikan(N);
-                    status=perbaikan.tampilkanPerbaikan(N);
-                    if (!status.isEmpty()){
+                    status = perbaikan.tampilkanPerbaikan(N);
+                    if (!status.isEmpty()) {
                         tablePerbaikan.setVisible(true);
                         ArrayList<RowPerbaikan> aRowPerbaikan = new ArrayList<RowPerbaikan>();
-                        aRowPerbaikan.add(0,new RowPerbaikan(status.get(0),status.get(1),status.get(3)));
+                        aRowPerbaikan.add(0, new RowPerbaikan(status.get(0), status.get(1), status.get(3)));
                         ObservableList<RowPerbaikan> listBuffer = FXCollections.observableArrayList(aRowPerbaikan);
                         kolomIDPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("idPerbaikan"));
                         kolomNamaPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("namaPerbaikan"));
                         kolomKondisiPerbaikan.setCellValueFactory(new PropertyValueFactory<RowPerbaikan, String>("kondisiPerbaikan"));
                         tablePerbaikan.setItems(listBuffer);
                         tablePerbaikan.setItems(listBuffer);
-                        if(status.get(3).equalsIgnoreCase("TIDAK RUSAK")){
+                        if (status.get(3).equalsIgnoreCase("TIDAK RUSAK")) {
                             buttonPerbaiki.setDisable(false);
                             buttonSelesaiPerbaiki.setDisable(true);
                         } else if (status.get(3).equalsIgnoreCase("RUSAK")) {
@@ -300,31 +310,31 @@ public class NandetechController implements Initializable {
         });
 
         /* Peminjaman */
-        peminjaman_search_button.setOnAction(event->{
+        peminjaman_search_button.setOnAction(event -> {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     int pilihan;
                     int N;
-                    if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Peminjaman")){
-                        pilihan=1;
-                    } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID User")){
-                        pilihan=2;
-                    } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Alat")){
-                        pilihan=3;
+                    if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Peminjaman")) {
+                        pilihan = 1;
+                    } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID User")) {
+                        pilihan = 2;
+                    } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Alat")) {
+                        pilihan = 3;
                     } else {
-                        pilihan=2;
+                        pilihan = 2;
                     }
                     try {
                         N = Integer.parseInt(peminjaman_search_field.getText());
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         N = 0;
                     }
                     ArrayList<ArrayList<String>> tabelPeminjamanBuffer = new ArrayList<ArrayList<String>>();
-                    tabelPeminjamanBuffer = peminjaman.tampilkanPeminjaman(N,pilihan);
+                    tabelPeminjamanBuffer = peminjaman.tampilkanPeminjaman(N, pilihan);
                     ArrayList<RowPeminjaman> tabelPeminjaman = new ArrayList<RowPeminjaman>();
                     System.out.println(tabelPeminjamanBuffer.size());
-                    for (int i=1;i<tabelPeminjamanBuffer.size();i++ ){
+                    for (int i = 1; i < tabelPeminjamanBuffer.size(); i++) {
                         tabelPeminjaman.add(new RowPeminjaman(Integer.parseInt(tabelPeminjamanBuffer.get(i).get(0)),
                                 Integer.parseInt(tabelPeminjamanBuffer.get(i).get(6)),
                                 tabelPeminjamanBuffer.get(i).get(1),
@@ -332,8 +342,8 @@ public class NandetechController implements Initializable {
                                 Timestamp.valueOf(tabelPeminjamanBuffer.get(i).get(4)),
                                 tabelPeminjamanBuffer.get(i).get(2)));
                     }
-                    for (int i=0;i<tabelPeminjamanBuffer.size();i++){
-                        for (int j=0;j<tabelPeminjamanBuffer.get(i).size();j++){
+                    for (int i = 0; i < tabelPeminjamanBuffer.size(); i++) {
+                        for (int j = 0; j < tabelPeminjamanBuffer.get(i).size(); j++) {
                             System.out.println(tabelPeminjamanBuffer.get(i).get(j));
                         }
                     }
@@ -345,7 +355,7 @@ public class NandetechController implements Initializable {
                         peminjaman_kolom_idPeminjam.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjam"));
                         peminjaman_kolom_Peminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPeminjaman"));
                         peminjaman_kolom_Pengembalian.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPengembalian"));
-                        peminjaman_kolom_deskripsi.setCellValueFactory(new PropertyValueFactory<RowPeminjaman,String>("deskripsi"));
+                        peminjaman_kolom_deskripsi.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("deskripsi"));
                         peminjaman_table.setItems(listBuffer);
                     } else {
                         peminjaman_table.setVisible(true);
@@ -353,6 +363,98 @@ public class NandetechController implements Initializable {
                 }
             }).start();
         });
-    }
+        /*STATISTIK */
+        //Perbaikan Alat
+        searchStatistikPerbaikan.setOnAction(event -> {
+            statistik_chart_perbaikan.getData().removeAll();//BELUM BERFUNGSI
+            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            ArrayList<String> status;
+            int N;
+            N = Integer.parseInt(statistik_choice_ID.getValue().get(0));
+            //System.out.println(N);
 
+            try {
+                status = statistik.ShowStatistikPerbaikanAlat(N);
+                if (!status.isEmpty()) {
+                    for (int i = 0; i < status.size() / 3; i++) {
+                        System.out.println(i);
+                        Integer y = Integer.parseInt(status.get((i * 3) + 2));
+                        String x = "";
+                        x = x.concat(status.get(i * 3));
+                        x = x.concat(" ");
+                        x = x.concat(status.get((i * 3) + 1));
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    statistik_chart_perbaikan.getData().add(series);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        //Penggunaan nama alat
+        statistik_search_nama.setOnAction(event -> {
+            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            ArrayList<String> status;
+            String N;
+            N = statistik_nama_alat.getText();
+            N = N.toLowerCase();
+            //System.out.println(N);
+
+            try {
+                status = statistik.ShowStatistikPenggunaanAlat(N);
+                if (!status.isEmpty()) {
+                    for (int i = 0; i < status.size() / 4; i++) {
+                        System.out.println(i);
+                        Integer y = Integer.parseInt(status.get((i * 4) + 3));
+                        String x = "";
+                        x = x.concat(status.get(i * 4));
+                        x = x.concat(" ");
+                        x = x.concat(status.get((i * 4) + 1));
+                        x = x.concat(" ");
+                        x = x.concat(status.get((i * 4) + 2));
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    statistik_chart_penggunaan.getData().add(series);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+    });
+    //penggunaan alat oleh suatu kelompok
+    statistik_search_golongan.setOnAction(event -> {
+        statistik_chart_penggunaankelompok.getData().removeAll();//BELUM BERFUNGSI
+        XYChart.Series<String, Integer> series = new XYChart.Series<>();
+        ArrayList<String> status;
+        String N;
+        N = statistik_golongan.getText();
+        N = N.toLowerCase();
+        //System.out.println(N);
+
+        try {
+            status = statistik.ShowStatistikPenggunaanKelompok(N);
+            if (!status.isEmpty()) {
+                for (int i = 0; i < status.size() / 4; i++) {
+                    System.out.println(i);
+                    Integer y = Integer.parseInt(status.get((i * 4) + 3));
+                    String x = "";
+                    x = x.concat(status.get(i * 4));
+                    x = x.concat(" ");
+                    x = x.concat(status.get((i * 4) + 1));
+                    x = x.concat(" ");
+                    x = x.concat(status.get((i * 4) + 2));
+                    series.getData().add(new XYChart.Data<>(x, y));
+                }
+                statistik_chart_penggunaankelompok.getData().add(series);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        });
+
+
+    }
 }
