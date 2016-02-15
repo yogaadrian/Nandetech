@@ -5,9 +5,14 @@ package Model.Ketersediaan;
  */
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.guigarage.flatterfx.FlatterFX;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -27,6 +32,7 @@ public class MainGUI extends Application {
             Scene scene = new Scene(page);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Login NandeTech");
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
