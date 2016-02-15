@@ -164,6 +164,10 @@ public class NandetechController implements Initializable {
         TableCek.setVisible(false);
         buttonPerbaiki.setDisable(true);
         buttonSelesaiPerbaiki.setDisable(true);
+        statistik_chart_penggunaan.setVisible(false);
+        statistik_chart_penggunaankelompok.setVisible(false);
+        statistik_chart_perbaikan.setVisible(false);
+
         final Timestamp tanggalPinjam;
         peminjaman_combo_search.getItems().add(0,"ID Peminjaman");
         peminjaman_combo_search.getItems().add(0,"ID Alat");
@@ -375,9 +379,19 @@ public class NandetechController implements Initializable {
             }).start();
         });
         /*STATISTIK */
+        statistik_choice_ID.setOnAction(event->{
+            searchStatistikPerbaikan.setDefaultButton(true);
+        });
+        statistik_golongan.setOnAction(event->{
+            statistik_search_golongan.setDefaultButton(true);
+        });
+        statistik_nama_alat.setOnAction(event->{
+            statistik_search_nama.setDefaultButton(true);
+        });
         //Perbaikan Alat
         searchStatistikPerbaikan.setOnAction(event -> {
             statistik_chart_perbaikan.getData().removeAll();//BELUM BERFUNGSI
+            statistik_chart_perbaikan.getData().clear();
             XYChart.Series<String, Integer> series = new XYChart.Series<>();
             ArrayList<String> status;
             int N;
@@ -392,26 +406,29 @@ public class NandetechController implements Initializable {
                         Integer y = Integer.parseInt(status.get((i * 3) + 2));
                         String x = "";
                         x = x.concat(status.get(i * 3));
-                        x = x.concat(" ");
+                        x = x.concat(" / ");
                         x = x.concat(status.get((i * 3) + 1));
                         series.getData().add(new XYChart.Data<>(x, y));
                     }
+                    statistik_chart_perbaikan.setVisible(true);
                     statistik_chart_perbaikan.getData().add(series);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
         });
         //Penggunaan nama alat
         statistik_search_nama.setOnAction(event -> {
-            XYChart.Series<String, Integer> series = new XYChart.Series<>();
-            ArrayList<String> status;
-            String N;
-            N = statistik_nama_alat.getText();
-            N = N.toLowerCase();
-            //System.out.println(N);
 
+            statistik_chart_penggunaan.getData().clear();
+    //System.out.println(N);
             try {
+                XYChart.Series<String, Integer> series = new XYChart.Series<>();
+                ArrayList<String> status;
+                String N;
+                N = statistik_nama_alat.getText();
+                N = N.toLowerCase();
                 status = statistik.ShowStatistikPenggunaanAlat(N);
                 if (!status.isEmpty()) {
                     for (int i = 0; i < status.size() / 4; i++) {
@@ -419,12 +436,13 @@ public class NandetechController implements Initializable {
                         Integer y = Integer.parseInt(status.get((i * 4) + 3));
                         String x = "";
                         x = x.concat(status.get(i * 4));
-                        x = x.concat(" ");
+                        x = x.concat(" / ");
                         x = x.concat(status.get((i * 4) + 1));
-                        x = x.concat(" ");
+                        x = x.concat(" - ");
                         x = x.concat(status.get((i * 4) + 2));
                         series.getData().add(new XYChart.Data<>(x, y));
                     }
+                    statistik_chart_penggunaan.setVisible(true);
                     statistik_chart_penggunaan.getData().add(series);
                 }
             } catch (SQLException e) {
@@ -434,35 +452,35 @@ public class NandetechController implements Initializable {
 
     });
     //penggunaan alat oleh suatu kelompok
-    statistik_search_golongan.setOnAction(event -> {
-        statistik_chart_penggunaankelompok.getData().removeAll();//BELUM BERFUNGSI
-        XYChart.Series<String, Integer> series = new XYChart.Series<>();
-        ArrayList<String> status;
-        String N;
-        N = statistik_golongan.getText();
-        N = N.toLowerCase();
-        //System.out.println(N);
-
-        try {
-            status = statistik.ShowStatistikPenggunaanKelompok(N);
-            if (!status.isEmpty()) {
-                for (int i = 0; i < status.size() / 4; i++) {
-                    System.out.println(i);
-                    Integer y = Integer.parseInt(status.get((i * 4) + 3));
-                    String x = "";
-                    x = x.concat(status.get(i * 4));
-                    x = x.concat(" ");
-                    x = x.concat(status.get((i * 4) + 1));
-                    x = x.concat(" ");
-                    x = x.concat(status.get((i * 4) + 2));
-                    series.getData().add(new XYChart.Data<>(x, y));
+        statistik_search_golongan.setOnAction(event -> {
+            statistik_chart_penggunaankelompok.getData().removeAll();//BELUM BERFUNGSI
+            statistik_chart_penggunaankelompok.getData().clear();
+            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            ArrayList<String> status;
+            String N;
+            N = statistik_golongan.getText();
+            N = N.toLowerCase();
+            //System.out.println(N);
+            try {
+                status = statistik.ShowStatistikPenggunaanKelompok(N);
+                if (!status.isEmpty()) {
+                    for (int i = 0; i < status.size() / 4; i++) {
+                        System.out.println(i);
+                        Integer y = Integer.parseInt(status.get((i * 4) + 3));
+                        String x = "";
+                        x = x.concat(status.get(i * 4));
+                        x = x.concat(" / ");
+                        x = x.concat(status.get((i * 4) + 1));
+                        x = x.concat(" - ");
+                        x = x.concat(status.get((i * 4) + 2));
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    statistik_chart_penggunaankelompok.setVisible(true);
+                    statistik_chart_penggunaankelompok.getData().add(series);
                 }
-                statistik_chart_penggunaankelompok.getData().add(series);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
 
         });
 
