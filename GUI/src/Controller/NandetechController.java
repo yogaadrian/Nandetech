@@ -493,6 +493,17 @@ public class NandetechController implements Initializable {
             }).start();
         });
 
+        peminjaman_delete_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    RowPeminjaman selected = peminjaman_table.getSelectionModel().getSelectedItem();
+                    int id_peminjaman = selected.getIdPeminjaman();
+                    peminjaman.cancelPeminjaman(id_peminjaman);
+                }
+            }).start();
+        });
+
         booking_add_button.setOnAction(event->{
             new Thread(new Runnable() {
                 @Override

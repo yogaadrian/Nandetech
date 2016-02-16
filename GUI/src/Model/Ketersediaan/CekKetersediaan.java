@@ -51,7 +51,7 @@ public class CekKetersediaan {
                         ArRow.get(i).setAvailability("Not Available");
                     } else {
                         if (ArRow.get(i).getTanggal_pengembalian()!=null) {
-                            if (ArRow.get(i).getTanggal_pengembalian().after(tanggalPinjam)) {
+                            if ((ArRow.get(i).getTanggal_pengembalian().after(tanggalPinjam))&&(ArRow.get(i).getTanggal_peminjaman().before(tanggalPinjam))||(ArRow.get(i).getTanggal_peminjaman().equals(tanggalPinjam))||(ArRow.get(i).getTanggal_pengembalian().equals(tanggalPinjam))) {
                                 ArRow.get(i).setAvailability("Not Available");
                             } else {
                                 ArRow.get(i).setAvailability("Available");
