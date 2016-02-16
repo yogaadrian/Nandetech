@@ -54,7 +54,7 @@ public class Peminjaman {
         return listAlat;
     }
 
-    public ArrayList<ArrayList<String>> tampilkanPeminjaman(int N, int pilihan){
+    public ArrayList<ArrayList<String>> tampilkanPeminjaman(String N, int pilihan){
         String query = "";
         ResultSet rs;
         ArrayList<ArrayList<String>> list = new ArrayList<>(1);
@@ -86,6 +86,7 @@ public class Peminjaman {
             break;
         }
 
+        System.out.println(query);
         db.connect(path);
         rs = db.fetchData(query);
 

@@ -376,7 +376,7 @@ public class NandetechController implements Initializable {
                 @Override
                 public void run() {
                     int pilihan;
-                    int N;
+                    String N;
                     if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Peminjaman")){
                         pilihan=1;
                     } else if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID User")){
@@ -386,10 +386,10 @@ public class NandetechController implements Initializable {
                     } else {
                         pilihan=2;
                     }
-                    try {
-                        N = Integer.parseInt(peminjaman_search_field.getText());
-                    } catch (Exception e){
-                        N = 0;
+                    if(!peminjaman_search_field.getText().isEmpty()){
+                        N = peminjaman_search_field.getText();
+                    } else {
+                        N = "1 OR 1=1";
                     }
                     ArrayList<ArrayList<String>> tabelPeminjamanBuffer = new ArrayList<ArrayList<String>>();
                     tabelPeminjamanBuffer = peminjaman.tampilkanPeminjaman(N,pilihan);
