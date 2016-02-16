@@ -10,18 +10,19 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LoginController">
    <children>
-      <PasswordField fx:id="login_password_field" layoutX="221.0" layoutY="271.0" />
-      <Button fx:id="login_password_button" layoutX="272.0" layoutY="310.0" mnemonicParsing="false" text="Login" />
-      <ImageView fitHeight="150.0" fitWidth="161.0" layoutX="220.0" layoutY="94.0" pickOnBounds="true" preserveRatio="true">
+      <PasswordField fx:id="login_password_field" layoutX="223.0" layoutY="292.0" />
+      <Button fx:id="login_password_button" layoutX="280.0" layoutY="328.0" mnemonicParsing="false" text="Login" />
+      <ImageView fitHeight="150.0" fitWidth="161.0" layoutX="232.0" layoutY="74.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@logo-itb.png" />
          </image>
       </ImageView>
-      <Label layoutX="244.0" layoutY="37.0" text="NandeTech">
+      <Label layoutX="251.0" layoutY="36.0" text="NandeTech">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Label fx:id="passwordError" layoutX="248.0" layoutY="254.0" text="Password Salah!" textFill="RED" visible="false" />
+      <Label fx:id="passwordError" layoutX="255.0" layoutY="269.0" text="Password Salah!" textFill="RED" visible="false" />
+      <Label layoutX="240.0" layoutY="231.0" style="-fx-font-style: italic;" text="'Note Admin Duktek'" textFill="#0d1679" />
    </children>
 </AnchorPane>
