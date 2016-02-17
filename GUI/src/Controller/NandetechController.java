@@ -555,12 +555,14 @@ public class NandetechController implements Initializable {
                     peminjaman_add_button.setVisible(true);
                     peminjaman_delete_button.setVisible(true);
                     RowPeminjaman selected = peminjaman_table.getSelectionModel().getSelectedItem();
-                    int id_peminjaman = selected.getIdPeminjaman();
-                    peminjaman.cancelPeminjaman(id_peminjaman);
+                    String id = validator.getText().replaceAll("[^\\d.]", "");
+                    System.out.println("id: " + id);
+                    int id_peminjaman = Integer.parseInt(id);
                     validator.setText("");
                     validator.setVisible(false);
                     validator_no.setVisible(false);
                     validator_yes.setVisible(false);
+                    peminjaman.cancelPeminjaman(id_peminjaman);
                 }
             }).start();
         });
