@@ -50,6 +50,12 @@ public class NandetechController implements Initializable {
     private DatePicker ButtonDate;
 
     @FXML
+    private DatePicker startdatestatistikperbaikan;
+
+    @FXML
+    private DatePicker finishdatestatistikperbaikan;
+
+    @FXML
     private Button ButtonCek;
 
     @FXML

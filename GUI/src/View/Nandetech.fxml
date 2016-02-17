@@ -195,6 +195,8 @@
                                                 <Font size="17.0" />
                                              </font>
                                           </Label>
+                                          <DatePicker fx:id="startdatestatistikperbaikan" layoutX="90.0" layoutY="266.0" />
+                                          <DatePicker fx:id="finishdatestatistikperbaikan" layoutX="380.0" layoutY="266.0" />
                                        </children>
                                     </AnchorPane>
                               </content>

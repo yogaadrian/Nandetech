@@ -25,7 +25,7 @@ public class Statistik {
         query = "SELECT extract(year from tanggal_peminjaman) as yr, extract(month from tanggal_peminjaman) as mon,golongan, count(id_alat) " +
                 "FROM peminjaman natural join peminjaman_alat natural join alat natural join user " +
                 "WHERE nama_alat = \"" + nama_alat +
-                "\" group by extract(year from tanggal_peminjaman), extract(month from tanggal_peminjaman),golongan order by 1, 2";
+                "\" and tanggal_peminjaman > CURRENT_DATE() - INTERVAL 12 MONTH group by extract(year from tanggal_peminjaman), extract(month from tanggal_peminjaman),golongan order by 1, 2";
         db.connect(path);
         rs = db.fetchData(query);
         rsmd = rs.getMetaData();
@@ -52,7 +52,7 @@ public class Statistik {
         query = "SELECT extract(year from tanggal_peminjaman) as yr, extract(month from tanggal_peminjaman) as mon,nama_alat, count(id_alat) " +
                 "FROM peminjaman natural join peminjaman_alat natural join alat natural join user " +
                 "WHERE golongan = \"" + golongan +
-                "\" group by extract(year from tanggal_peminjaman), extract(month from tanggal_peminjaman),nama_alat order by 1, 2";
+                "\" and tanggal_peminjaman > CURRENT_DATE() - INTERVAL 12 MONTH group by extract(year from tanggal_peminjaman), extract(month from tanggal_peminjaman),nama_alat order by 1, 2";
         db.connect(path);
         rs = db.fetchData(query);
         rsmd = rs.getMetaData();
@@ -78,7 +78,7 @@ public class Statistik {
         query = "SELECT extract(year from tanggal_masuk) as yr, extract(month from tanggal_masuk) as mon, count(id_alat) " +
                 "FROM perbaikan " +
                 "WHERE id_alat = " + id_alat +
-                " group by extract(year from tanggal_masuk), extract(month from tanggal_masuk)";
+                " and tanggal_peminjaman > CURRENT_DATE() - INTERVAL 12 MONTH group by extract(year from tanggal_masuk), extract(month from tanggal_masuk)";
         db.connect(path);
         rs = db.fetchData(query);
         rsmd = rs.getMetaData();
