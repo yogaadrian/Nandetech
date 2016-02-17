@@ -78,7 +78,7 @@ public class Statistik {
         query = "SELECT extract(year from tanggal_masuk) as yr, extract(month from tanggal_masuk) as mon, count(id_alat) " +
                 "FROM perbaikan " +
                 "WHERE id_alat = " + id_alat +
-                " and tanggal_peminjaman > CURRENT_DATE() - INTERVAL 12 MONTH group by extract(year from tanggal_masuk), extract(month from tanggal_masuk)";
+                " and tanggal_masuk > CURRENT_DATE() - INTERVAL 12 MONTH group by extract(year from tanggal_masuk), extract(month from tanggal_masuk)";
         db.connect(path);
         rs = db.fetchData(query);
         rsmd = rs.getMetaData();
