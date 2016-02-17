@@ -597,7 +597,7 @@ public class NandetechController implements Initializable {
         searchStatistikPerbaikan.setOnAction(event -> {
             statistik_chart_perbaikan.getData().removeAll();//BELUM BERFUNGSI
             statistik_chart_perbaikan.getData().clear();
-            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+
             ArrayList<String> status;
             int N;
             N = Integer.parseInt(statistik_choice_ID.getValue().get(0));
@@ -607,16 +607,18 @@ public class NandetechController implements Initializable {
                 status = statistik.ShowStatistikPerbaikanAlat(N);
                 if (!status.isEmpty()) {
                     for (int i = 0; i < status.size() / 3; i++) {
+                        XYChart.Series<String, Integer> series = new XYChart.Series<>();
                         System.out.println(i);
                         Integer y = Integer.parseInt(status.get((i * 3) + 2));
                         String x = "";
                         x = x.concat(status.get(i * 3));
                         x = x.concat(" / ");
                         x = x.concat(status.get((i * 3) + 1));
-                        series.getData().add(new XYChart.Data<>(x, y));
+                        series.getData().add(new XYChart.Data<>("", y));
+                        series.setName(x);
+                        statistik_chart_perbaikan.getData().add(series);
                     }
                     statistik_chart_perbaikan.setVisible(true);
-                    statistik_chart_perbaikan.getData().add(series);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -629,7 +631,7 @@ public class NandetechController implements Initializable {
             statistik_chart_penggunaan.getData().clear();
     //System.out.println(N);
             try {
-                XYChart.Series<String, Integer> series = new XYChart.Series<>();
+
                 ArrayList<String> status;
                 String N;
                 N = statistik_nama_alat.getText();
@@ -637,6 +639,7 @@ public class NandetechController implements Initializable {
                 status = statistik.ShowStatistikPenggunaanAlat(N);
                 if (!status.isEmpty()) {
                     for (int i = 0; i < status.size() / 4; i++) {
+                        XYChart.Series<String, Integer> series = new XYChart.Series<>();
                         System.out.println(i);
                         Integer y = Integer.parseInt(status.get((i * 4) + 3));
                         String x = "";
@@ -645,10 +648,12 @@ public class NandetechController implements Initializable {
                         x = x.concat(status.get((i * 4) + 1));
                         x = x.concat(" - ");
                         x = x.concat(status.get((i * 4) + 2));
-                        series.getData().add(new XYChart.Data<>(x, y));
+                        series.getData().add(new XYChart.Data<>("", y));
+                        series.setName(x);
+                        statistik_chart_penggunaan.getData().add(series);
                     }
                     statistik_chart_penggunaan.setVisible(true);
-                    statistik_chart_penggunaan.getData().add(series);
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -660,7 +665,7 @@ public class NandetechController implements Initializable {
         statistik_search_golongan.setOnAction(event -> {
             statistik_chart_penggunaankelompok.getData().removeAll();//BELUM BERFUNGSI
             statistik_chart_penggunaankelompok.getData().clear();
-            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+
             ArrayList<String> status;
             String N;
             N = statistik_golongan.getText();
@@ -670,6 +675,7 @@ public class NandetechController implements Initializable {
                 status = statistik.ShowStatistikPenggunaanKelompok(N);
                 if (!status.isEmpty()) {
                     for (int i = 0; i < status.size() / 4; i++) {
+                        XYChart.Series<String, Integer> series = new XYChart.Series<>();
                         System.out.println(i);
                         Integer y = Integer.parseInt(status.get((i * 4) + 3));
                         String x = "";
@@ -678,10 +684,13 @@ public class NandetechController implements Initializable {
                         x = x.concat(status.get((i * 4) + 1));
                         x = x.concat(" - ");
                         x = x.concat(status.get((i * 4) + 2));
-                        series.getData().add(new XYChart.Data<>(x, y));
+                        series.getData().add(new XYChart.Data<>("", y));
+                        series.setName(x);
+
+                        statistik_chart_penggunaankelompok.getData().add(series);
                     }
                     statistik_chart_penggunaankelompok.setVisible(true);
-                    statistik_chart_penggunaankelompok.getData().add(series);
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
