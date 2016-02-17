@@ -11,6 +11,7 @@ import Model.Peminjaman.RowPeminjaman;
 import Model.Perbaikan.Perbaikan;
 import Model.Perbaikan.RowPerbaikan;
 import Model.Statistik.Statistik;
+import com.sun.javafx.scene.control.skin.LabeledText;
 import com.sun.rowset.internal.Row;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import javafx.application.Platform;
@@ -97,6 +98,7 @@ public class NandetechController implements Initializable {
     @FXML
     private ComboBox<ArrayList<String>> choiceID;
 
+    //Peminjaman
     @FXML
     private TextField peminjaman_search_field;
 
@@ -132,6 +134,10 @@ public class NandetechController implements Initializable {
 
     @FXML
     private TableColumn<RowPeminjaman, String> peminjaman_kolom_deskripsi;
+
+    @FXML
+    private TableColumn<RowPeminjaman, String> peminjaman_kolom_namaUser;
+
     @FXML
     private Button booking_add_button;
 
@@ -149,6 +155,9 @@ public class NandetechController implements Initializable {
 
     @FXML
     private TextField booking_deskripsi_field;
+
+    @FXML
+    private Text title;
 
     @FXML
     private Text text_1;
@@ -177,6 +186,16 @@ public class NandetechController implements Initializable {
     @FXML
     private BarChart<String, Integer> statistik_chart_penggunaan;
 
+    @FXML
+    private Text validator;
+
+    @FXML
+    private Button validator_yes;
+
+    @FXML
+    private Button validator_no;
+
+    //Statistik
     @FXML
     private TextField statistik_nama_alat;
 
@@ -371,10 +390,12 @@ public class NandetechController implements Initializable {
         });
 
         /* Peminjaman */
+        peminjaman_search_button.setDefaultButton(true);
         peminjaman_search_button.setOnAction(event->{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    peminjaman_delete_button.setDisable(false);
                     int pilihan;
                     String N;
                     if (peminjaman_combo_search.getValue().equalsIgnoreCase("ID Peminjaman")){
@@ -401,7 +422,8 @@ public class NandetechController implements Initializable {
                                 tabelPeminjamanBuffer.get(i).get(1),
                                 Timestamp.valueOf(tabelPeminjamanBuffer.get(i).get(3)),
                                 Timestamp.valueOf(tabelPeminjamanBuffer.get(i).get(4)),
-                                tabelPeminjamanBuffer.get(i).get(2)));
+                                tabelPeminjamanBuffer.get(i).get(2),
+                                tabelPeminjamanBuffer.get(i).get(8)));
                     }
                     for (int i=0;i<tabelPeminjamanBuffer.size();i++){
                         for (int j=0;j<tabelPeminjamanBuffer.get(i).size();j++){
@@ -418,6 +440,7 @@ public class NandetechController implements Initializable {
                         peminjaman_kolom_Peminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPeminjaman"));
                         peminjaman_kolom_Pengembalian.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPengembalian"));
                         peminjaman_kolom_deskripsi.setCellValueFactory(new PropertyValueFactory<RowPeminjaman,String>("deskripsi"));
+                        peminjaman_kolom_namaUser.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("namaUser"));
                         peminjaman_table.setItems(listBuffer);
                     } else {
                         peminjaman_table.setVisible(true);
@@ -437,6 +460,7 @@ public class NandetechController implements Initializable {
                     peminjaman_delete_button.setVisible(false);
                     peminjaman_table.setVisible(false);
 
+                    title.setVisible(true);
                     text_1.setVisible(true);
                     text_2.setVisible(true);
                     text_3.setVisible(true);
@@ -497,9 +521,46 @@ public class NandetechController implements Initializable {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    peminjaman_add_button.setVisible(false);
+                    peminjaman_delete_button.setVisible(false);
+                    RowPeminjaman selected = peminjaman_table.getSelectionModel().getSelectedItem();
+                    int id_peminjaman = selected.getIdPeminjaman();
+                    validator.setText("Are you sure you want to delete Peminjaman with id=" + id_peminjaman + "?");
+                    validator.setVisible(true);
+                    validator_no.setVisible(true);
+                    validator_yes.setVisible(true);
+                    peminjaman_search_button.fire();
+                }
+            }).start();
+        });
+
+        validator_no.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    peminjaman_add_button.setVisible(true);
+                    peminjaman_delete_button.setVisible(true);
+                    validator.setText("");
+                    validator.setVisible(false);
+                    validator_no.setVisible(false);
+                    validator_yes.setVisible(false);
+                }
+            }).start();
+        });
+
+        validator_yes.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    peminjaman_add_button.setVisible(true);
+                    peminjaman_delete_button.setVisible(true);
                     RowPeminjaman selected = peminjaman_table.getSelectionModel().getSelectedItem();
                     int id_peminjaman = selected.getIdPeminjaman();
                     peminjaman.cancelPeminjaman(id_peminjaman);
+                    validator.setText("");
+                    validator.setVisible(false);
+                    validator_no.setVisible(false);
+                    validator_yes.setVisible(false);
                 }
             }).start();
         });
@@ -531,6 +592,7 @@ public class NandetechController implements Initializable {
                             booking_deskripsi_field.getText()
                             );
 
+                    title.setVisible(false);
                     booking_add_button.setVisible(false);
                     booking_cancel_button.setVisible(false);
                     booking_idPeminjam_field.setVisible(false);
@@ -567,6 +629,7 @@ public class NandetechController implements Initializable {
                     booking_deskripsi_field.setVisible(false);
                     booking_alat_table.setVisible(false);
 
+                    title.setVisible(false);
                     text_1.setVisible(false);
                     text_2.setVisible(false);
                     text_3.setVisible(false);

@@ -15,14 +15,18 @@ public class RowPeminjaman {
     private Timestamp tanggalPeminjaman;
     private Timestamp tanggalPengembalian;
     private String deskripsi;
+    private String namaUser;
 
-    public RowPeminjaman(int idPeminjaman, int idAlat, String idPeminjam, Timestamp tanggalPeminjaman, Timestamp tanggalPengembalian, String deskripsi) {
+    public RowPeminjaman(int idPeminjaman, int idAlat, String idPeminjam, Timestamp tanggalPeminjaman,
+                         Timestamp tanggalPengembalian, String deskripsi, String namaUser) {
         this.idPeminjaman = idPeminjaman;
         this.idAlat = idAlat;
         this.idPeminjam = idPeminjam;
         this.tanggalPeminjaman = tanggalPeminjaman;
         this.tanggalPengembalian = tanggalPengembalian;
         this.deskripsi = deskripsi;
+        this.namaUser = namaUser;
+
     }
 
     public int getIdPeminjaman() {
@@ -73,6 +77,13 @@ public class RowPeminjaman {
         this.deskripsi = deskripsi;
     }
 
+    public String getNamaUser() {
+        return namaUser;
+    }
+
+    public void setNamaUser(String namaUser) {
+        this.namaUser = namaUser;
+    }
 
 
 

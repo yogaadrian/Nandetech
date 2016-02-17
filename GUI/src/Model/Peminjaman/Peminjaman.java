@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by acel on 08-Feb-16.
@@ -65,7 +66,9 @@ public class Peminjaman {
                 query = "SELECT * " +
                         "FROM peminjaman " +
                         "JOIN peminjaman_alat " +
+                        "JOIN user " +
                         "WHERE peminjaman.id_peminjaman = " + N + " " +
+                        "AND peminjaman.id_user = user.id_user " +
                         "AND peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman";
                 break;
             case 2:
@@ -73,7 +76,9 @@ public class Peminjaman {
                 query = "SELECT * " +
                         "FROM peminjaman " +
                         "JOIN peminjaman_alat " +
+                        "JOIN user " +
                         "WHERE peminjaman.id_user = " + N + " " +
+                        "AND peminjaman.id_user = user.id_user " +
                         "AND peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman";
                 break;
             case 3:
@@ -81,7 +86,9 @@ public class Peminjaman {
                 query = "SELECT * " +
                         "FROM peminjaman " +
                         "JOIN peminjaman_alat " +
+                        "JOIN user " +
                         "WHERE id_alat = " + N + " " +
+                        "AND peminjaman.id_user = user.id_user " +
                         "AND peminjaman.id_peminjaman = peminjaman_alat.id_peminjaman";
             break;
         }
@@ -129,7 +136,7 @@ public class Peminjaman {
         Database db = new Database();
         db.connect(path);
 
-        String query = "DELETE FROM Peminjaman " +
+        String query = "DELETE FROM peminjaman " +
                 "WHERE id_peminjaman = " + id_peminjaman;
         db.changeData(query);
 
@@ -176,16 +183,27 @@ public class Peminjaman {
 
         User peminjam = new User(id_user);
 
-        int id_peminjaman = 0;
-        String query = "SELECT *" +
-                "FROM peminjaman";
-        ResultSet rs = db.fetchData(query);
+        boolean unique = false;
+        int id_peminjaman = 1;
+        String query;
 
-        try {
-            rs.last();
-            id_peminjaman = rs.getRow() + 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while(!unique){
+            query = "SELECT * " +
+                    "FROM peminjaman " +
+                    "WHERE id_peminjaman = " + id_peminjaman;
+            ResultSet rs = db.fetchData(query);
+            try {
+                rs.next();
+                System.out.println(query);
+                System.out.println(id_peminjaman);
+                if(rs.getRow() == 0){
+                    unique = true;
+                } else {
+                    id_peminjaman++;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         boolean valid = true;
@@ -198,12 +216,14 @@ public class Peminjaman {
                 query = "INSERT INTO peminjaman " +
                         "VALUES (" + id_peminjaman + ", '" + id_user + "', '" + deskripsi + "', '" +
                         tanggal_peminjaman + "', '" + tanggal_pengembalian + "')";
+                System.out.println(query);
                 db.changeData(query);
             }
 
             for (int i = 0; i < alat.length; i++) {
                 query = "INSERT INTO peminjaman_alat " +
                         "VALUES (" + id_peminjaman + ", " + alat[i] + ")";
+                System.out.println(query);
                 db.changeData(query);
             }
         } else {
@@ -232,7 +252,7 @@ public class Peminjaman {
                 System.out.print("Masukkan pilihan: ");
                 int pil2 = sc.nextInt();
                 System.out.print("Masukkan ID: ");
-                int N = sc.nextInt();
+                String N = sc.nextLine();
                 p.tampilkanPeminjaman(N, pil2);
                 break;
             case 2:
