@@ -24,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -220,6 +221,66 @@ public class NandetechController implements Initializable {
     @FXML
     private Button searchStatistikPerbaikan;
 
+    //Alat
+    @FXML
+    private Button alat_add_button;
+
+    @FXML
+    private Button alat_delete_button;
+
+    @FXML
+    private Button alat_update_button;
+
+    @FXML
+    private TableView<RowAlat> alat_table;
+
+    @FXML
+    private TableColumn<RowAlat, Integer> alat_kolom_id;
+
+    @FXML
+    private TableColumn<RowAlat, String> alat_kolom_nama;
+
+    @FXML
+    private TableColumn<RowAlat, String> alat_kolom_lokasi;
+
+    @FXML
+    private TableColumn<RowAlat, String> alat_kolom_kondisi;
+
+    @FXML
+    private TextField alat_search_field;
+
+    @FXML
+    private ComboBox<String> alat_combo_search;
+
+    @FXML
+    private Button alat_search_button;
+
+    @FXML
+    private ComboBox<String> alat_combo_update;
+
+    @FXML
+    private Group alat_group_1;
+
+    @FXML
+    private Button alat_proceed_button;
+
+    @FXML
+    private Button alat_cancel_button;
+
+    @FXML
+    private TextField alat_id;
+
+    @FXML
+    private TextField alat_nama;
+
+    @FXML
+    private TextField alat_lokasi;
+
+    @FXML
+    private TextField alat_kondisi;
+
+
+
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         CekKetersediaan check = new CekKetersediaan();
@@ -238,12 +299,18 @@ public class NandetechController implements Initializable {
         peminjaman_combo_search.getItems().add(0,"ID Alat");
         peminjaman_combo_search.getItems().add(0, "ID Peminjam");
 
+        alat_combo_search.getItems().add("ID");
+        alat_combo_search.getItems().add("Nama");
+        alat_combo_search.getItems().add("Lokasi");
+        alat_combo_search.getItems().add("Kondisi");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 ArrayList<ArrayList<String>> listAlat = perbaikan.semuaAlat();
                 ArrayList<String> viewableAlat = new ArrayList<String>();
                 for (int i = 0; i < listAlat.size(); i++) {
+                    alat_combo_update.getItems().add(listAlat.get(i).get(0) + "-" + listAlat.get(i).get(1));
                     viewableAlat.add(i, listAlat.get(i).get(0) + " | " + listAlat.get(i).get(1));
                     listAlat.get(i).remove(2);
                     listAlat.get(i).remove(2);
@@ -431,20 +498,17 @@ public class NandetechController implements Initializable {
                         }
                         System.out.println();
                     }
-                    if (!tabelPeminjaman.isEmpty()) {
-                        peminjaman_table.setVisible(true);
-                        ObservableList<RowPeminjaman> listBuffer = FXCollections.observableArrayList(tabelPeminjaman);
-                        peminjaman_kolom_idPeminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjaman"));
-                        peminjaman_kolom_idAlat.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idAlat"));
-                        peminjaman_kolom_idPeminjam.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjam"));
-                        peminjaman_kolom_Peminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPeminjaman"));
-                        peminjaman_kolom_Pengembalian.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPengembalian"));
-                        peminjaman_kolom_deskripsi.setCellValueFactory(new PropertyValueFactory<RowPeminjaman,String>("deskripsi"));
-                        peminjaman_kolom_namaUser.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("namaUser"));
-                        peminjaman_table.setItems(listBuffer);
-                    } else {
-                        peminjaman_table.setVisible(true);
-                    }
+
+                    peminjaman_table.setVisible(true);
+                    ObservableList<RowPeminjaman> listBuffer = FXCollections.observableArrayList(tabelPeminjaman);
+                    peminjaman_kolom_idPeminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjaman"));
+                    peminjaman_kolom_idAlat.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idAlat"));
+                    peminjaman_kolom_idPeminjam.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("idPeminjam"));
+                    peminjaman_kolom_Peminjaman.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPeminjaman"));
+                    peminjaman_kolom_Pengembalian.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("tanggalPengembalian"));
+                    peminjaman_kolom_deskripsi.setCellValueFactory(new PropertyValueFactory<RowPeminjaman,String>("deskripsi"));
+                    peminjaman_kolom_namaUser.setCellValueFactory(new PropertyValueFactory<RowPeminjaman, String>("namaUser"));
+                    peminjaman_table.setItems(listBuffer);
                 }
             }).start();
         });
@@ -529,7 +593,6 @@ public class NandetechController implements Initializable {
                     validator.setVisible(true);
                     validator_no.setVisible(true);
                     validator_yes.setVisible(true);
-                    peminjaman_search_button.fire();
                 }
             }).start();
         });
@@ -554,7 +617,6 @@ public class NandetechController implements Initializable {
                 public void run() {
                     peminjaman_add_button.setVisible(true);
                     peminjaman_delete_button.setVisible(true);
-                    RowPeminjaman selected = peminjaman_table.getSelectionModel().getSelectedItem();
                     String id = validator.getText().replaceAll("[^\\d.]", "");
                     System.out.println("id: " + id);
                     int id_peminjaman = Integer.parseInt(id);
@@ -763,6 +825,191 @@ public class NandetechController implements Initializable {
 
         });
 
+        alat_search_button.setDefaultButton(true);
+        alat_search_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<ArrayList<String>> tabelBuffer = new ArrayList<ArrayList<String>>();
+                    int pilihan = 2;
+                    String N;
+                    if (alat_combo_search.getValue().equalsIgnoreCase("ID")){
+                        pilihan=1;
+                    } else if (alat_combo_search.getValue().equalsIgnoreCase("Nama")){
+                        pilihan=2;
+                    } else if (alat_combo_search.getValue().equalsIgnoreCase("Lokasi")){
+                        pilihan=3;
+                    } else if (alat_combo_search.getValue().equalsIgnoreCase("Kondisi")){
+                        pilihan=4;
+                    }
+
+                    if(!alat_search_field.getText().isEmpty()){
+                        N = alat_search_field.getText();
+                    } else {
+                        N = "1 OR 1=1";
+                    }
+
+                    RowAlat rowAlat = new RowAlat();
+                    tabelBuffer = rowAlat.tampilkanAlat(N, pilihan);
+
+                    ArrayList<RowAlat> tabelBooking = new ArrayList<RowAlat>();
+                    System.out.println(tabelBuffer.size());
+
+                    for (int i=0;i<tabelBuffer.size();i++ ){
+                        tabelBooking.add(new RowAlat(
+                                Integer.parseInt(tabelBuffer.get(i).get(0)),
+                                tabelBuffer.get(i).get(1),
+                                tabelBuffer.get(i).get(2),
+                                tabelBuffer.get(i).get(3))
+                        );
+                    }
+
+                    for (int i=0;i<tabelBooking.size();i++){
+                        System.out.println(tabelBooking.get(i).getLokasi());
+                    }
+
+                    alat_table.setVisible(true);
+                    alat_table.setEditable(true);
+                    ObservableList<RowAlat> listBuffer = FXCollections.observableArrayList(tabelBooking);
+
+                    alat_table.setItems(listBuffer);
+                    alat_kolom_id.setCellValueFactory(new PropertyValueFactory<RowAlat, Integer>("id_alat"));
+                    alat_kolom_nama.setCellValueFactory(new PropertyValueFactory<RowAlat, String>("nama_alat"));
+                    alat_kolom_lokasi.setCellValueFactory(new PropertyValueFactory<RowAlat, String>("lokasi"));
+                    alat_kolom_kondisi.setCellValueFactory(new PropertyValueFactory<RowAlat, String>("kondisi"));
+                }
+            }).start();
+        });
+
+        alat_delete_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    RowAlat rowAlat = alat_table.getSelectionModel().getSelectedItem();
+                    int id_alat = rowAlat.getId_alat();
+                    rowAlat.hapusAlat(id_alat);
+                    alat_table.setVisible(false);
+                    Perbaikan perbaikan = new Perbaikan();
+                    ArrayList<ArrayList<String>> temp = perbaikan.semuaAlat();
+                    alat_combo_update.getItems().removeAll();
+
+                    for(int i=0; i<temp.size(); i++){
+                        alat_combo_update.getItems().add(temp.get(i).get(0) + "-" + temp.get(i).get(1));
+                    }
+                }
+            }).start();
+        });
+
+        alat_update_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    alat_group_1.setVisible(true);
+                    alat_id.setVisible(true);
+                    alat_combo_update.setVisible(true);
+
+                    alat_proceed_button.setDefaultButton(true);
+                    alat_add_button.setVisible(false);
+                    alat_update_button.setVisible(false);
+                    alat_id.setText(null);
+
+                    alat_combo_update.getItems().removeAll();
+                    Perbaikan perbaikan = new Perbaikan();
+                    ArrayList<ArrayList<String>> temp = perbaikan.semuaAlat();
+                    alat_combo_update.getItems().removeAll();
+
+                    for(int i=0; i<temp.size(); i++){
+                        alat_combo_update.getItems().add(temp.get(i).get(0) + "-" + temp.get(i).get(1));
+                    }
+                }
+            }).start();
+        });
+
+        alat_add_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    alat_group_1.setVisible(true);
+                    alat_id.setVisible(false);
+                    alat_proceed_button.setDefaultButton(true);
+
+                    alat_add_button.setVisible(false);
+                    alat_update_button.setVisible(false);
+                    alat_id.setText(null);
+                }
+            }).start();
+        });
+
+        alat_cancel_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    alat_group_1.setVisible(false);
+                    alat_combo_update.setVisible(false);
+                    alat_proceed_button.setDefaultButton(false);
+
+                    alat_add_button.setVisible(true);
+                    alat_update_button.setVisible(true);
+                }
+            }).start();
+        });
+
+        alat_proceed_button.setOnAction(event->{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    alat_group_1.setVisible(false);
+                    alat_combo_update.setVisible(false);
+                    alat_proceed_button.setDefaultButton(false);
+
+                    //Proses data
+                    int id_alat = -1;
+                    if(alat_id.getText() != null)
+                        id_alat = Integer.parseInt(alat_id.getText());
+                    String nama_alat = alat_nama.getText();
+                    String lokasi_alat = alat_lokasi.getText();
+                    String kondisi_alat = alat_kondisi.getText();
+
+                    String query = "";
+                    RowAlat rowAlat = new RowAlat();
+                    if(rowAlat.exists(id_alat)){
+                        rowAlat.ubahAlat(id_alat, nama_alat, lokasi_alat, kondisi_alat);
+                    } else {
+                        rowAlat.tambahAlat(nama_alat, lokasi_alat, kondisi_alat);
+                    }
+
+                    alat_combo_update.getItems().removeAll();
+                    Perbaikan perbaikan = new Perbaikan();
+                    ArrayList<ArrayList<String>> temp = perbaikan.semuaAlat();
+                    alat_combo_update.getItems().removeAll();
+
+                    for(int i=0; i<temp.size(); i++){
+                        alat_combo_update.getItems().add(temp.get(i).get(0) + "-" + temp.get(i).get(1));
+                    }
+
+                    alat_add_button.setVisible(true);
+                    alat_update_button.setVisible(true);
+                }
+            }).start();
+        });
+
+        alat_combo_update.setOnAction(event -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run(){
+                    String alat = alat_combo_update.getSelectionModel().getSelectedItem();
+                    int i = alat.indexOf("-");
+                    String id_alat = alat.substring(0, i);
+                    RowAlat rowAlat = new RowAlat();
+                    ArrayList<ArrayList<String>> result = rowAlat.tampilkanAlat(id_alat, 1);
+                    alat_id.setText(result.get(0).get(0));
+                    alat_id.setDisable(true);
+                    alat_nama.setText(result.get(0).get(1));
+                    alat_lokasi.setText(result.get(0).get(2));
+                    alat_kondisi.setText(result.get(0).get(3));
+                }
+            }).start();
+        });
 
     }
 }

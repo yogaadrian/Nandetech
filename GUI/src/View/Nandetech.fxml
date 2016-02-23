@@ -18,6 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.Group?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.NandetechController">
    <children>
       <TabPane layoutY="-4.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
@@ -216,6 +217,67 @@
                         </Accordion>
                      </children></AnchorPane>
               </content>
+            </Tab>
+            <Tab text="Alat">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <children>
+                            <Accordion prefHeight="372.0" prefWidth="600">
+                                <panes>
+                                    <TitledPane animated="false" text="Read, Delete">
+                                        <content>
+                                            <AnchorPane>
+                                                <children>
+                                                    <TextField fx:id="alat_search_field" layoutX="227.0" layoutY="50.0" prefWidth="150" />
+                                                    <ComboBox fx:id="alat_combo_search" layoutX="50.0" layoutY="50.0" prefHeight="26.0" prefWidth="150.0" />
+                                                    <Button fx:id="alat_search_button" layoutX="390.0" layoutY="50.0" mnemonicParsing="false" prefWidth="150" text="Search" />
+                                                    <TableView fx:id="alat_table" layoutX="27.0" layoutY="130.0" prefHeight="200.0" prefWidth="547.0">
+                                                        <columns>
+                                                            <TableColumn fx:id="alat_kolom_id" minWidth="1.0" prefWidth="100.0" text="ID Alat" />
+                                                            <TableColumn fx:id="alat_kolom_nama" prefWidth="200.0" text="Nama" />
+                                                            <TableColumn fx:id="alat_kolom_lokasi" prefWidth="107.0" text="Lokasi" />
+                                                            <TableColumn fx:id="alat_kolom_kondisi" prefWidth="140.0" text="Kondisi" />
+                                                        </columns>
+                                                    </TableView>
+                                                    <Button fx:id="alat_delete_button" layoutX="390.0" layoutY="90.0" mnemonicParsing="false" prefWidth="150" text="Hapus alat" />
+                                                </children>
+                                            </AnchorPane>
+                                        </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" text="Create, Update">
+                                        <content>
+                                            <AnchorPane>
+                                                <children>
+                                                    <Label fx:id="alat_label" text="Create, Update Alat" layoutX="225" layoutY="20">
+                                                        <font>
+                                                            <Font size="20"/>
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="alat_combo_update" layoutX="450" layoutY="100" prefWidth="120" visible="false"/>
+                                                    <Group fx:id="alat_group_1" visible="false">
+                                                        <Text text="ID" layoutX="50" layoutY="115" />
+                                                        <TextField fx:id="alat_id" layoutX="200" layoutY="100" prefWidth="200"/>
+                                                        <Text text="Nama" layoutX="50" layoutY="155"/>
+                                                        <TextField fx:id="alat_nama" layoutX="200" layoutY="140" prefWidth="200"/>
+                                                        <Text text="Lokasi" layoutX="50" layoutY="195"/>
+                                                        <TextField fx:id="alat_lokasi" layoutX="200" layoutY="180" prefWidth="200"/>
+                                                        <Text text="Kondisi" layoutX="50" layoutY="235"/>
+                                                        <TextField fx:id="alat_kondisi" layoutX="200" layoutY="220" prefWidth="200"/>
+                                                        <Button fx:id="alat_proceed_button" layoutX="325.0" layoutY="275.0" mnemonicParsing="false" prefWidth="100" text="Proceed" />
+                                                        <Button fx:id="alat_cancel_button" layoutX="175.0" layoutY="275.0" mnemonicParsing="false" prefWidth="100" text="Cancel" />
+                                                    </Group>
+                                                    <Button fx:id="alat_update_button" layoutX="427.0" layoutY="60.0" mnemonicParsing="false" prefWidth="150" text="Update alat" />
+                                                    <Button fx:id="alat_add_button" layoutX="27.0" layoutY="60.0" mnemonicParsing="false" prefWidth="150" text="Tambah alat" />
+
+                                                </children>
+                                            </AnchorPane>
+                                        </content>
+                                    </TitledPane>
+                                </panes>
+                            </Accordion>
+                        </children>
+                    </AnchorPane>
+                </content>
             </Tab>
         </tabs>
       </TabPane>
