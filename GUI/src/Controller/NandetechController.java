@@ -912,7 +912,10 @@ public class NandetechController implements Initializable {
                     alat_table.setVisible(false);
                     Perbaikan perbaikan = new Perbaikan();
                     ArrayList<ArrayList<String>> temp = perbaikan.semuaAlat();
-                    alat_combo_update.getItems().removeAll();
+                    if(alat_combo_update.getItems().size() > 0)
+                        alat_combo_update.getItems().remove(0, alat_combo_update.getItems().size()-1);
+                    else if(alat_combo_update.getItems().size() == 1)
+                        alat_combo_update.getItems().remove(0);
 
                     for(int i=0; i<temp.size(); i++){
                         alat_combo_update.getItems().add(temp.get(i).get(0) + "-" + temp.get(i).get(1));
@@ -925,6 +928,11 @@ public class NandetechController implements Initializable {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    if(alat_combo_update.getItems().size() > 1)
+                        alat_combo_update.getItems().remove(0, alat_combo_update.getItems().size()-1);
+                    else if(alat_combo_update.getItems().size() == 1)
+                        alat_combo_update.getItems().remove(0);
+                    System.out.println(alat_combo_update.getItems().size());
                     alat_group_1.setVisible(true);
                     alat_id.setVisible(true);
                     alat_combo_update.setVisible(true);
@@ -934,10 +942,8 @@ public class NandetechController implements Initializable {
                     alat_update_button.setVisible(false);
                     alat_id.setText(null);
 
-                    alat_combo_update.getItems().removeAll();
                     Perbaikan perbaikan = new Perbaikan();
                     ArrayList<ArrayList<String>> temp = perbaikan.semuaAlat();
-                    alat_combo_update.getItems().removeAll();
 
                     for(int i=0; i<temp.size(); i++){
                         alat_combo_update.getItems().add(temp.get(i).get(0) + "-" + temp.get(i).get(1));
@@ -999,10 +1005,8 @@ public class NandetechController implements Initializable {
                         rowAlat.tambahAlat(nama_alat, lokasi_alat, kondisi_alat);
                     }
 
-                    alat_combo_update.getItems().removeAll();
                     Perbaikan perbaikan = new Perbaikan();
                     ArrayList<ArrayList<String>> temp = perbaikan.semuaAlat();
-                    alat_combo_update.getItems().removeAll();
 
                     for(int i=0; i<temp.size(); i++){
                         alat_combo_update.getItems().add(temp.get(i).get(0) + "-" + temp.get(i).get(1));
