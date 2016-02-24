@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Group?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -18,7 +19,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.Group?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.NandetechController">
    <children>
       <TabPane layoutY="-4.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
@@ -161,6 +161,11 @@
                                                 <Font size="20.0" />
                                              </font>
                                           </Label>
+                                          <Label fx:id="notFound1" layoutX="183.0" layoutY="247.0" text="Item tidak ditemukan" textFill="RED" visible="false">
+                                             <font>
+                                                <Font size="27.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -184,6 +189,11 @@
                                           </Label>
                                           <TextField fx:id="statistik_golongan" layoutX="237.0" layoutY="23.0" />
                                           <Button fx:id="statistik_search_golongan" layoutX="429.0" layoutY="23.0" mnemonicParsing="false" text="Search" />
+                                          <Label fx:id="notFound2" layoutX="183.0" layoutY="247.0" text="Item tidak ditemukan" textFill="RED" visible="false">
+                                             <font>
+                                                <Font size="27.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -207,8 +217,11 @@
                                                 <Font size="17.0" />
                                              </font>
                                           </Label>
-                                          <DatePicker fx:id="startdatestatistikperbaikan" layoutX="90.0" layoutY="266.0" />
-                                          <DatePicker fx:id="finishdatestatistikperbaikan" layoutX="380.0" layoutY="266.0" />
+                                          <Label fx:id="notFound3" layoutX="183.0" layoutY="247.0" text="Item tidak ditemukan" textFill="RED" visible="false">
+                                             <font>
+                                                <Font size="27.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -248,21 +261,21 @@
                                         <content>
                                             <AnchorPane>
                                                 <children>
-                                                    <Label fx:id="alat_label" text="Create, Update Alat" layoutX="225" layoutY="20">
+                                                    <Label fx:id="alat_label" layoutX="225" layoutY="20" text="Create, Update Alat">
                                                         <font>
-                                                            <Font size="20"/>
+                                                            <Font size="20" />
                                                         </font>
                                                     </Label>
-                                                    <ComboBox fx:id="alat_combo_update" layoutX="450" layoutY="100" prefWidth="120" visible="false"/>
+                                                    <ComboBox fx:id="alat_combo_update" layoutX="450" layoutY="100" prefWidth="120" visible="false" />
                                                     <Group fx:id="alat_group_1" visible="false">
-                                                        <Text text="ID" layoutX="50" layoutY="115" />
-                                                        <TextField fx:id="alat_id" layoutX="200" layoutY="100" prefWidth="200"/>
-                                                        <Text text="Nama" layoutX="50" layoutY="155"/>
-                                                        <TextField fx:id="alat_nama" layoutX="200" layoutY="140" prefWidth="200"/>
-                                                        <Text text="Lokasi" layoutX="50" layoutY="195"/>
-                                                        <TextField fx:id="alat_lokasi" layoutX="200" layoutY="180" prefWidth="200"/>
-                                                        <Text text="Kondisi" layoutX="50" layoutY="235"/>
-                                                        <TextField fx:id="alat_kondisi" layoutX="200" layoutY="220" prefWidth="200"/>
+                                                        <Text layoutX="50" layoutY="115" text="ID" />
+                                                        <TextField fx:id="alat_id" layoutX="200" layoutY="100" prefWidth="200" />
+                                                        <Text layoutX="50" layoutY="155" text="Nama" />
+                                                        <TextField fx:id="alat_nama" layoutX="200" layoutY="140" prefWidth="200" />
+                                                        <Text layoutX="50" layoutY="195" text="Lokasi" />
+                                                        <TextField fx:id="alat_lokasi" layoutX="200" layoutY="180" prefWidth="200" />
+                                                        <Text layoutX="50" layoutY="235" text="Kondisi" />
+                                                        <TextField fx:id="alat_kondisi" layoutX="200" layoutY="220" prefWidth="200" />
                                                         <Button fx:id="alat_proceed_button" layoutX="325.0" layoutY="275.0" mnemonicParsing="false" prefWidth="100" text="Proceed" />
                                                         <Button fx:id="alat_cancel_button" layoutX="175.0" layoutY="275.0" mnemonicParsing="false" prefWidth="100" text="Cancel" />
                                                     </Group>
